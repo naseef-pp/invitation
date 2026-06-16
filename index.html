@@ -61,22 +61,15 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
   content:'';position:absolute;border:1px solid var(--gold);opacity:0.2;pointer-events:none}
 #env-top::before{top:16px;left:16px;right:16px;bottom:0}
 #env-bot::after{top:0;left:16px;right:16px;bottom:16px}
-.env-content{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;gap:16px;pointer-events:none;text-align:center;
-  padding:20px;transition:opacity 0.4s ease}
-.env-content.fade{opacity:0}
-.env-bism{font-family:var(--fa);font-size:clamp(24px,6vw,52px);
-  color:var(--ink);opacity:0.8;letter-spacing:0.02em}
-.env-line{width:52px;height:1px;background:var(--gold);position:relative;margin:4px auto}
-.env-line::before,.env-line::after{content:'◇';position:absolute;color:var(--gold);
-  font-size:7px;top:50%;transform:translateY(-50%)}
-.env-line::before{right:calc(100% + 5px)}
-.env-line::after{left:calc(100% + 5px)}
-.env-names{font-family:var(--fh);font-size:clamp(22px,5vw,40px);color:var(--terra)}
-.env-seal-wrap{pointer-events:all;cursor:pointer;margin-top:4px;
-  transition:transform 0.2s ease}
-.env-seal-wrap:hover{transform:scale(1.07)}
-.env-hint{font-family:var(--fh);font-size:13px;color:var(--ink-light);
+.env-content{position:absolute;inset:0;z-index:2;pointer-events:none}
+.env-content.fade{opacity:0;transition:opacity 0.4s ease}
+/* seal sits exactly on the seam where the two envelope halves meet (50% line) */
+.env-seal-wrap{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  pointer-events:all;cursor:pointer;transition:transform 0.2s ease}
+.env-seal-wrap:hover{transform:translate(-50%,-50%) scale(1.07)}
+.env-hint{position:absolute;top:50%;left:50%;
+  transform:translate(-50%,calc(-50% + 62px));white-space:nowrap;
+  font-family:var(--fh);font-size:13px;color:var(--ink-light);
   letter-spacing:0.12em;text-transform:uppercase;
   animation:hintPulse 2.2s ease-in-out infinite}
 @keyframes hintPulse{0%,100%{opacity:0.35}50%{opacity:0.85}}
@@ -140,12 +133,11 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 #hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;
   justify-content:center;text-align:center;padding:60px 20px;
   position:relative;overflow:hidden;background:transparent}
-.hero-badge{font-family:var(--fh);font-size:13px;color:var(--sage-d);
-  border:1px solid var(--sage);border-radius:20px;padding:5px 18px;
-  letter-spacing:0.12em;text-transform:uppercase;display:inline-block;margin-bottom:22px;
+.hero-badge{font-family:var(--fd);font-style:italic;font-size:clamp(15px,3vw,19px);
+  color:var(--ink-light);letter-spacing:0.06em;display:inline-block;margin-bottom:18px;
   opacity:0;animation:fadeUp 0.8s ease forwards 0.3s}
 .hero-art{margin:0 auto 24px;opacity:0;animation:fadeUp 1s ease forwards 0.5s;cursor:pointer}
-.hero-art img{width:clamp(200px,42vw,320px);height:auto;display:block}
+.hero-art img{width:clamp(230px,58vw,380px);height:auto;display:block}
 .hero-names{font-family:var(--fh);font-size:clamp(44px,11vw,90px);color:var(--ink);
   line-height:1.05;opacity:0;animation:fadeUp 1s ease forwards 0.7s}
 .hero-names .amp{color:var(--terra);font-size:0.68em;
@@ -170,17 +162,17 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 .nik-eyebrow{font-family:var(--fh);font-size:13px;color:var(--sage-d);
   letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px}
 .nik-title{font-family:var(--fd);font-weight:300;
-  font-size:clamp(30px,6vw,54px);color:var(--ink);line-height:1.2;margin-bottom:28px}
+  font-size:clamp(44px,12vw,54px);color:var(--ink);line-height:1.2;margin-bottom:28px}
 .nik-title em{color:var(--terra);font-style:italic}
 .nik-doodle{margin:0 auto 28px;max-width:280px}
 .nik-doodle img{width:100%;height:auto;display:block}
-.nik-details{display:inline-flex;gap:13px;align-items:center;
-  font-family:var(--fh);font-size:13px;color:var(--ink-light);
-  opacity:0.62;flex-wrap:wrap;justify-content:center}
+.nik-details{display:inline-flex;gap:14px;align-items:center;
+  font-family:var(--fh);font-size:clamp(17px,4.2vw,21px);color:var(--ink-light);
+  opacity:0.78;flex-wrap:wrap;justify-content:center}
 .nik-details .dot{width:3px;height:3px;border-radius:50%;background:var(--gold);flex-shrink:0}
 
 /* ── VENUE VIDEO SECTION ── */
-#venue-section{height:250vh;position:relative}
+#venue-section{height:420vh;position:relative}
 .venue-sticky{position:sticky;top:0;height:100vh;overflow:hidden}
 #venue-video{width:100%;height:100%;object-fit:cover;display:block}
 .venue-loader{position:absolute;inset:0;background:rgba(30,24,16,0.5);
@@ -195,8 +187,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 #countdown{text-align:center;
   padding:clamp(60px,9vw,100px) clamp(20px,5vw,60px);
   background:rgba(242,235,224,0.97);position:relative;z-index:1}
-.cd-label{font-family:var(--fd);font-style:italic;
-  font-size:clamp(14px,2vw,18px);color:var(--ink-light);margin-bottom:32px}
+.cd-label{font-family:var(--fd);font-style:italic;font-weight:300;
+  font-size:clamp(34px,8.5vw,44px);color:var(--ink);margin-bottom:32px}
 .cd-grid{display:flex;justify-content:center;gap:clamp(12px,3vw,28px);flex-wrap:wrap}
 .cd-unit{display:flex;flex-direction:column;align-items:center;gap:8px}
 .cd-box{width:clamp(70px,15vw,108px);height:clamp(70px,15vw,108px);
@@ -215,9 +207,8 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
   padding:clamp(60px,9vw,100px) clamp(20px,5vw,60px);
   background:rgba(250,247,242,0.96);position:relative;z-index:1}
 .loc-t{font-family:var(--fd);font-weight:300;
-  font-size:clamp(28px,5vw,44px);color:var(--ink);margin-bottom:6px}
+  font-size:clamp(38px,9.5vw,44px);color:var(--ink);margin-bottom:32px}
 .loc-t em{color:var(--terra);font-style:italic}
-.loc-sub{font-family:var(--fb);font-size:13px;color:var(--ink-light);margin-bottom:32px}
 .loc-card{max-width:460px;margin:0 auto;background:var(--cream);
   border:1.5px solid var(--cream-dark);border-radius:20px;
   overflow:hidden;box-shadow:4px 4px 0 var(--cream-dark)}
@@ -282,17 +273,14 @@ canvas#booth-canvas{display:none}
 .wb-eye{font-family:var(--fh);font-size:13px;color:var(--sage-l);
   letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px}
 .wb-title{font-family:var(--fd);font-weight:300;
-  font-size:clamp(28px,5vw,44px);color:white;margin-bottom:8px}
+  font-size:clamp(38px,9.5vw,44px);color:white;margin-bottom:8px}
 .wb-title em{color:var(--terra-l);font-style:italic}
-.wb-sub{font-family:var(--fd);font-style:italic;
-  font-size:clamp(14px,2vw,17px);color:rgba(255,255,255,0.5);
-  max-width:380px;margin:0 auto;line-height:1.7}
-.wish-form{max-width:440px;margin:0 auto 44px;background:#F9F5EC;
+.wish-form{max-width:440px;margin:44px auto 0;background:#F9F5EC;
   border-radius:4px;padding:24px;
   box-shadow:3px 3px 0 rgba(0,0,0,0.2),6px 6px 0 rgba(0,0,0,0.1);
   transform:rotate(-0.5deg);position:relative}
-.wish-form label{display:block;font-family:var(--fh);font-size:13px;
-  color:var(--ink-light);margin-bottom:5px}
+.wish-form label{display:block;font-family:var(--fh);font-size:clamp(16px,4vw,18px);
+  color:var(--ink-mid);margin-bottom:7px}
 .wish-form input,.wish-form textarea{width:100%;border:none;
   border-bottom:1.5px solid var(--cream-dark);background:transparent;
   padding:8px 0;font-family:var(--fh);font-size:16px;color:var(--ink);
@@ -342,20 +330,20 @@ canvas#booth-canvas{display:none}
   position:relative;overflow:hidden;z-index:1;
   background:linear-gradient(180deg,#121820 0%,#0A1020 100%)}
 .cl-art{margin:0 auto 28px;opacity:0.88;cursor:pointer}
-.cl-art img{width:clamp(160px,35vw,280px);height:auto;display:block;margin:0 auto}
+.cl-art img{width:clamp(210px,58vw,360px);height:auto;display:block;margin:0 auto}
 .cl-arabic{font-family:var(--fa);font-size:clamp(18px,3.5vw,34px);
   color:rgba(255,255,255,0.72);margin-bottom:6px}
 .cl-trans{font-family:var(--fd);font-style:italic;
   font-size:clamp(11px,1.8vw,13px);color:rgba(255,255,255,0.35);
-  margin-bottom:24px;letter-spacing:0.04em}
+  letter-spacing:0.04em}
 .cl-see{font-family:var(--fd);font-style:italic;
-  font-size:clamp(15px,2.5vw,20px);color:rgba(255,255,255,0.6);margin-bottom:16px}
-.cl-heart{font-size:28px;display:block;margin:10px 0;
+  font-size:clamp(19px,4vw,26px);color:rgba(255,255,255,0.78);margin-bottom:18px}
+.cl-heart{font-size:30px;display:block;margin:6px 0 22px;
   animation:heartBeat 1.6s ease-in-out infinite}
-.cl-names{font-family:var(--fh);font-size:clamp(36px,7vw,64px);
-  color:var(--terra-l);line-height:1.1}
+.cl-names{font-family:var(--fh);font-size:clamp(30px,6.5vw,46px);
+  color:var(--terra-l);line-height:1.25;margin-bottom:34px}
 .cl-names .small{font-family:var(--fd);font-style:italic;
-  font-size:0.45em;color:rgba(255,255,255,0.4);display:block;margin-bottom:4px}
+  font-size:1em;color:rgba(255,255,255,0.55);display:block;margin-bottom:6px}
 
 /* ── KEYFRAMES ── */
 @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:none}}
@@ -402,15 +390,11 @@ canvas#booth-canvas{display:none}
   <div class="env-half" id="env-top"></div>
   <div class="env-half" id="env-bot"></div>
   <div class="env-content" id="env-content">
-    <div class="env-bism">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
-    <div class="env-line"></div>
-    <div class="env-names">Naseef &amp; Nisrin</div>
     <div class="env-seal-wrap" id="env-seal-wrap">
-      <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+      <svg width="88" height="88" viewBox="0 0 80 80" fill="none">
         <circle class="seal-fill" cx="40" cy="40" r="38" fill="#C4714A"/>
         <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="1" stroke-dasharray="3 3"/>
-        <path d="M40 20 Q24 32 40 48 Q18 46 18 34 Q18 22 40 20Z" fill="rgba(255,255,255,0.88)"/>
-        <path d="M52 21 L53.4 25.4 L58 25.4 L54.5 28.0 L55.7 32.4 L52 29.8 L48.3 32.4 L49.5 28.0 L46 25.4 L50.6 25.4Z" fill="rgba(255,255,255,0.65)" transform="scale(0.55) translate(43,20)"/>
+        <text x="40" y="49" text-anchor="middle" font-family="'Cormorant Garamond',Georgia,serif" font-style="italic" font-weight="600" font-size="29" letter-spacing="-1" fill="rgba(255,255,255,0.92)">NN</text>
         <g class="crack">
           <line x1="40" y1="8"  x2="33" y2="28" stroke="rgba(255,255,255,0.7)" stroke-width="1.3" stroke-linecap="round"/>
           <line x1="40" y1="8"  x2="49" y2="26" stroke="rgba(255,255,255,0.6)" stroke-width="1.1" stroke-linecap="round"/>
@@ -448,7 +432,7 @@ canvas#booth-canvas{display:none}
     <path d="M306 26 Q311 20 316 26" stroke="#1E1810" stroke-width="1.2" fill="none" stroke-linecap="round"/>
   </svg>
 
-  <div class="hero-badge">18 · 19 October 2026</div>
+  <div class="hero-badge">The wedding of</div>
   <!-- Doodle_1.png: couple standing together in wedding attire -->
   <div class="hero-art" id="hero-art">
     <img src="Web_assets/Doodle_1.png" alt="Naseef & Nisrin"/>
@@ -483,7 +467,7 @@ canvas#booth-canvas{display:none}
   <div class="venue-sticky">
     <video id="venue-video" muted playsinline preload="auto"
       style="width:100%;height:100%;object-fit:cover;display:block">
-      <source src="Web_assets/Wed_video_port.mp4" type="video/mp4"/>
+      <source src="Web_assets/wed_video_land.mp4" type="video/mp4"/>
     </video>
     <div class="venue-loader" id="venue-loader">
       <span>Loading…</span>
@@ -493,7 +477,7 @@ canvas#booth-canvas{display:none}
 
 <!-- ── COUNTDOWN ── -->
 <section id="countdown">
-  <div class="cd-label reveal">counting down to the celebration</div>
+  <div class="cd-label reveal">Counting down</div>
   <div class="cd-grid reveal d1">
     <div class="cd-unit">
       <div class="cd-box"><span class="cd-num" id="cd-d">--</span></div>
@@ -518,7 +502,6 @@ canvas#booth-canvas{display:none}
 <section id="location">
   <div style="max-width:860px;margin:0 auto">
     <h2 class="loc-t reveal">Find <em>Us</em></h2>
-    <p class="loc-sub reveal d1">Farm Rock Garden · Kozhikode, Kerala</p>
     <div class="loc-card reveal d2">
       <div class="map-area">
         <svg width="100%" height="150" viewBox="0 0 480 150" preserveAspectRatio="xMidYMid slice" fill="none">
@@ -542,9 +525,9 @@ canvas#booth-canvas{display:none}
       </div>
       <div class="loc-body">
         <div class="loc-name">Farm Rock Garden</div>
-        <div class="loc-addr">Kozhikode, Kerala</div>
+        <div class="loc-addr">Farook College Road, Chungam</div>
         <div class="btn-row">
-          <a href="https://maps.google.com/?q=Farm+Rock+Garden+Kozhikode+Kerala"
+          <a href="https://maps.google.com/?q=Farm+Rock+Garden+Farook+College+Road+Chungam+Kozhikode+Kerala"
             target="_blank" rel="noopener" class="btn btn-p">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
               <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
@@ -598,7 +581,7 @@ canvas#booth-canvas{display:none}
   <!-- Fallback (shown before camera granted or if denied) -->
   <div class="booth-fallback" id="booth-fallback">
     <img src="Web_assets/Doodle_camera.png" alt="Naseef & Nisrin holding a camera"/>
-    <p>Take a photo with our wedding frame!</p>
+    <p>Take a photo with us!</p>
     <button class="btn btn-p" id="booth-start">📸 Open Camera</button>
   </div>
 </section>
@@ -609,21 +592,9 @@ canvas#booth-canvas{display:none}
     <div class="wb-header">
       <div class="wb-eye reveal">leave a dua or wish</div>
       <h2 class="wb-title reveal d1">Your <em>Blessings</em></h2>
-      <p class="wb-sub reveal d2">Every dua you leave here<br>becomes a lantern in their story.</p>
     </div>
-    <div class="wish-form reveal d3">
-      <label for="w-name">Your name</label>
-      <input type="text" id="w-name" placeholder="e.g. Aisha, Uncle Farhan…" autocomplete="off" maxlength="40"/>
-      <label for="w-text">Your dua or wish <span class="w-char" id="w-char">160</span></label>
-      <textarea id="w-text" placeholder="Barakallahu lakuma wa baraka alaykuma…" maxlength="160"></textarea>
-      <div class="w-row">
-        <button class="btn btn-p" id="w-submit" style="background:var(--terra-d)">
-          <span id="w-lbl">Pin it 📌</span>
-        </button>
-      </div>
-    </div>
-    <div class="corkboard">
-      <div class="board-label" id="board-label">Wishes &amp; Duas</div>
+    <div class="corkboard reveal d2">
+      <div class="board-label" id="board-label">Wish board</div>
       <div class="notes-grid" id="notes-grid">
         <!-- Hardcoded pinned family notes -->
         <div class="note note-pinned">
@@ -643,24 +614,35 @@ canvas#booth-canvas{display:none}
         <button id="show-more-btn">Show more wishes ↓</button>
       </div>
     </div>
+    <div class="wish-form reveal d3">
+      <label for="w-name">Your name</label>
+      <input type="text" id="w-name" autocomplete="off" maxlength="40"/>
+      <label for="w-text">Your dua or wish <span class="w-char" id="w-char">160</span></label>
+      <textarea id="w-text" maxlength="160"></textarea>
+      <div class="w-row">
+        <button class="btn btn-p" id="w-submit" style="background:var(--terra-d)">
+          <span id="w-lbl">Pin it 📌</span>
+        </button>
+      </div>
+    </div>
   </div>
 </section>
 
 <!-- ── CLOSING ── -->
 <section id="closing">
   <div style="position:relative;z-index:2;text-align:center">
-    <!-- Doodle_2.png: couple walking away, seen from behind -->
-    <div class="cl-art reveal" id="closing-art">
-      <img src="Web_assets/Doodle_2.png" alt="Naseef & Nisrin walking together"/>
-    </div>
-    <div class="cl-arabic reveal d1">بَارَكَ اللهُ لَكُمَا وَبَارَكَ عَلَيْكُمَا وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ</div>
-    <div class="cl-trans reveal d2">May Allah bless you both and unite you in goodness</div>
-    <div class="cl-see reveal d2">We'll see you there, insha'Allah.</div>
-    <span class="cl-heart reveal d3">🤍</span>
-    <div class="cl-names reveal d3">
+    <div class="cl-see reveal">We'll see you there, insha'Allah.</div>
+    <span class="cl-heart reveal d1">🤍</span>
+    <div class="cl-names reveal d2">
       <span class="small">with love,</span>
       Naseef &amp; Nisrin
     </div>
+    <!-- Doodle_2.png: couple walking away, seen from behind -->
+    <div class="cl-art reveal d3" id="closing-art">
+      <img src="Web_assets/Doodle_2.png" alt="Naseef & Nisrin walking together"/>
+    </div>
+    <div class="cl-arabic reveal d4">بَارَكَ اللهُ لَكُمَا وَبَارَكَ عَلَيْكُمَا وَجَمَعَ بَيْنَكُمَا فِي خَيْرٍ</div>
+    <div class="cl-trans reveal d4">May Allah bless you both and unite you in goodness</div>
   </div>
 </section>
 
@@ -753,6 +735,16 @@ function openEnvelope(){
   const sealWrap=document.querySelector('.env-seal-wrap');
   if(sealWrap) sealWrap.closest('svg')||sealWrap.querySelector('svg');
   document.querySelector('#env-seal-wrap svg').classList.add('cracked');
+  // Start the music right on this tap — it's the user gesture that unlocks audio
+  setupAudio();
+  if(audioCtx){
+    if(audioCtx.state==='suspended') audioCtx.resume();
+    if(!musicPlaying){
+      musicPlaying=true;
+      musicBtn.classList.add('on');
+      playMusicLoop();
+    }
+  }
   setTimeout(()=>{
     envTopH.classList.add('open');
     envBotH.classList.add('open');
@@ -876,23 +868,53 @@ addEventListener('scroll',()=>{
 
 /* ── VIDEO SCRUB ─────────────────────── */
 const vSec=$('venue-section'),vVid=$('venue-video'),vLoader=$('venue-loader');
-let vReady=false;
+let vReady=false,vSeeking=false,vPendingTime=null,vTicking=false;
 vVid.addEventListener('canplaythrough',()=>{vReady=true;vLoader.classList.add('hidden')});
-vVid.addEventListener('loadedmetadata',()=>{vVid.currentTime=0});
+vVid.addEventListener('loadedmetadata',()=>{
+  // priming the decoder with a tiny seek avoids a black first frame on iOS/Android
+  vVid.currentTime=0.001;
+});
 // Fallback: hide loader after 8s even if not fully loaded
 setTimeout(()=>vLoader.classList.add('hidden'),8000);
 
-function scrubVideo(){
-  if(!vSec||!vVid) return;
+function getScrubProgress(){
   const rect=vSec.getBoundingClientRect();
   const total=vSec.offsetHeight-innerHeight;
-  if(total<=0) return;
-  const prog=Math.max(0,Math.min(1,-rect.top/total));
-  if(vVid.readyState>=1&&vVid.duration){
-    vVid.currentTime=prog*vVid.duration;
+  if(total<=0) return 0;
+  return Math.max(0,Math.min(1,-rect.top/total));
+}
+
+function requestSeek(time){
+  // Only one seek is ever in flight. If a seek is already running, remember
+  // the latest requested time and apply it the moment the current one settles —
+  // this is what stops mobile browsers from queuing up and "jumping" after scroll ends.
+  if(vSeeking){vPendingTime=time;return}
+  vSeeking=true;
+  vVid.currentTime=time;
+}
+vVid.addEventListener('seeked',()=>{
+  vSeeking=false;
+  if(vPendingTime!==null){
+    const t=vPendingTime;vPendingTime=null;
+    requestSeek(t);
+  }
+});
+
+function applyScrub(){
+  vTicking=false;
+  if(!vSec||!vVid||!vReady||!vVid.duration) return;
+  const prog=getScrubProgress();
+  const target=prog*vVid.duration;
+  if(Math.abs(target-vVid.currentTime)<0.015) return;
+  requestSeek(target);
+}
+function onVideoScroll(){
+  if(!vTicking){
+    vTicking=true;
+    requestAnimationFrame(applyScrub);
   }
 }
-addEventListener('scroll',scrubVideo,{passive:true});
+addEventListener('scroll',onVideoScroll,{passive:true});
 
 /* ── COUNTDOWN ───────────────────────── */
 const TARGET=new Date('2026-10-19T16:00:00+05:30');
@@ -908,19 +930,45 @@ updateCD();setInterval(updateCD,1000);
 
 /* ── SAVE TO CALENDAR ────────────────── */
 $('cal-btn').addEventListener('click',()=>{
+  const ua=navigator.userAgent||'';
+  const isIOS=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const isAndroid=/Android/.test(ua);
+  const title='Naseef & Nisrin — Wedding Reception 🤍';
+  const details='You are warmly invited to the wedding reception of Naseef & Nisrin.\nFarm Rock Garden, Farook College Road, Chungam, Kozhikode · 4:00 PM – 10:00 PM';
+  const location='Farm Rock Garden, Farook College Road, Chungam, Kozhikode, Kerala';
+
+  if(isAndroid){
+    // Opens straight into Google Calendar's add-event screen — no file involved
+    const url='https://calendar.google.com/calendar/render?action=TEMPLATE'
+      +'&text='+encodeURIComponent(title)
+      +'&dates=20261019T103000Z/20261019T163000Z'
+      +'&details='+encodeURIComponent(details)
+      +'&location='+encodeURIComponent(location);
+    window.location.href=url;
+    return;
+  }
+
   const ics=['BEGIN:VCALENDAR','VERSION:2.0',
     'PRODID:-//Naseef & Nisrin Wedding//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH',
     'BEGIN:VEVENT','DTSTART;TZID=Asia/Kolkata:20261019T160000',
     'DTEND;TZID=Asia/Kolkata:20261019T220000',
-    'SUMMARY:Naseef & Nisrin — Wedding Reception 🤍',
-    'DESCRIPTION:You are warmly invited to the wedding reception of Naseef & Nisrin.\\nFarm Rock Garden\\, Kozhikode · 4:00 PM – 10:00 PM',
-    'LOCATION:Farm Rock Garden\\, Kozhikode\\, Kerala','STATUS:CONFIRMED',
+    'SUMMARY:'+title,
+    'DESCRIPTION:'+details.replace(/\n/g,'\\n').replace(/,/g,'\\,'),
+    'LOCATION:'+location.replace(/,/g,'\\,'),'STATUS:CONFIRMED',
     'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Wedding Reception in 1 hour 🤍',
     'TRIGGER:-PT1H','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
-  const b=new Blob([ics],{type:'text/calendar;charset=utf-8'});
-  const u=URL.createObjectURL(b),a=document.createElement('a');
-  a.href=u;a.download='naseef-nisrin-wedding.ics';a.click();URL.revokeObjectURL(u);
-  toast('📅 Calendar invite downloaded!');
+
+  if(isIOS){
+    // Navigating directly to a text/calendar data URI makes Safari open the
+    // event straight in the Calendar app's "Add" screen, instead of downloading a file
+    window.location.href='data:text/calendar;charset=utf-8,'+encodeURIComponent(ics);
+  }else{
+    // Desktop: no single "calendar app" to deep-link into, so offer the .ics file
+    const b=new Blob([ics],{type:'text/calendar;charset=utf-8'});
+    const u=URL.createObjectURL(b),a=document.createElement('a');
+    a.href=u;a.download='naseef-nisrin-wedding.ics';a.click();URL.revokeObjectURL(u);
+    toast('📅 Calendar invite downloaded!');
+  }
 });
 
 /* ── PHOTO BOOTH ─────────────────────── */
@@ -1010,8 +1058,6 @@ function renderWishes(){
     showMoreBtn.style.display='block';
     showMoreBtn.textContent=`Show ${Math.min(BATCH,allWishes.length-shownCount)} more ↓`;
   }else{showMoreBtn.style.display='none';}
-  const total=allWishes.length+PINNED;
-  boardLabel.textContent=`${total} lantern${total===1?'':'s'} lit 🪔`;
 }
 showMoreBtn.addEventListener('click',()=>{
   shownCount=Math.min(allWishes.length,shownCount+BATCH);renderWishes();

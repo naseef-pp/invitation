@@ -73,8 +73,6 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
   letter-spacing:0.12em;text-transform:uppercase;
   animation:hintPulse 2.2s ease-in-out infinite}
 @keyframes hintPulse{0%,100%{opacity:0.35}50%{opacity:0.85}}
-.crack{display:none}
-.cracked .crack{display:block}
 .cracked .seal-fill{fill:#9A4F2E}
 
 /* ── MUSIC BUTTON ── */
@@ -133,11 +131,11 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 #hero{min-height:100vh;display:flex;flex-direction:column;align-items:center;
   justify-content:center;text-align:center;padding:60px 20px;
   position:relative;overflow:hidden;background:transparent}
-.hero-badge{font-family:var(--fd);font-style:italic;font-size:clamp(15px,3vw,19px);
+.hero-badge{font-family:var(--fd);font-style:italic;font-size:clamp(18px,3.6vw,22px);
   color:var(--ink-light);letter-spacing:0.06em;display:inline-block;margin-bottom:18px;
   opacity:0;animation:fadeUp 0.8s ease forwards 0.3s}
 .hero-art{margin:0 auto 24px;opacity:0;animation:fadeUp 1s ease forwards 0.5s;cursor:pointer}
-.hero-art img{width:clamp(230px,58vw,380px);height:auto;display:block}
+.hero-art img{width:clamp(270px,68vw,420px);height:auto;display:block}
 .hero-names{font-family:var(--fh);font-size:clamp(44px,11vw,90px);color:var(--ink);
   line-height:1.05;opacity:0;animation:fadeUp 1s ease forwards 0.7s}
 .hero-names .amp{color:var(--terra);font-size:0.68em;
@@ -159,7 +157,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 /* ── NIKAH ── */
 #nikah{text-align:center;padding:clamp(60px,9vw,100px) clamp(20px,5vw,60px);
   background:rgba(250,247,242,0.94);position:relative;z-index:1}
-.nik-eyebrow{font-family:var(--fh);font-size:13px;color:var(--sage-d);
+.nik-eyebrow{font-family:var(--fh);font-size:15px;color:var(--sage-d);
   letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px}
 .nik-title{font-family:var(--fd);font-weight:300;
   font-size:clamp(44px,12vw,54px);color:var(--ink);line-height:1.2;margin-bottom:28px}
@@ -167,21 +165,26 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 .nik-doodle{margin:0 auto 28px;max-width:280px}
 .nik-doodle img{width:100%;height:auto;display:block}
 .nik-details{display:inline-flex;gap:14px;align-items:center;
-  font-family:var(--fh);font-size:clamp(17px,4.2vw,21px);color:var(--ink-light);
+  font-family:var(--fh);font-size:clamp(14px,3.4vw,17px);color:var(--ink-light);
   opacity:0.78;flex-wrap:wrap;justify-content:center}
 .nik-details .dot{width:3px;height:3px;border-radius:50%;background:var(--gold);flex-shrink:0}
 
-/* ── VENUE VIDEO SECTION ── */
-#venue-section{height:420vh;position:relative}
-.venue-sticky{position:sticky;top:0;height:100vh;overflow:hidden}
-#venue-video{width:100%;height:100%;object-fit:cover;display:block}
-.venue-loader{position:absolute;inset:0;background:rgba(30,24,16,0.5);
-  display:flex;align-items:center;justify-content:center;
-  transition:opacity 0.5s ease;pointer-events:none}
-.venue-loader span{font-family:var(--fh);font-size:16px;
-  color:rgba(255,255,255,0.7);letter-spacing:0.1em;
-  animation:hintPulse 1.5s ease-in-out infinite}
+/* ── VENUE SCRUB (image-sequence) ── */
+#venue-section{height:100vh;position:relative;background:#000;overflow:hidden}
+#venue-section.ready{height:1250vh}
+.venue-sticky{position:sticky;top:0;height:100vh;width:100%;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;background:#000}
+#venue-canvas{display:block;width:100%;height:100%}
+@media(max-width:768px){
+  #venue-canvas{height:auto;aspect-ratio:3/4;max-height:100%}
+}
+.venue-vignette{position:absolute;inset:0;pointer-events:none;z-index:2;
+  background:linear-gradient(to bottom,rgba(0,0,0,0.35) 0%,transparent 18%,
+    transparent 78%,rgba(0,0,0,0.45) 100%)}
+.venue-loader{position:absolute;left:0;right:0;bottom:0;height:3px;
+  background:rgba(255,255,255,0.15);z-index:6;transition:opacity 0.5s ease}
 .venue-loader.hidden{opacity:0}
+.venue-loader-fill{height:100%;width:0%;background:var(--terra);transition:width 0.2s ease}
 
 /* ── COUNTDOWN ── */
 #countdown{text-align:center;
@@ -253,6 +256,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 .booth-live{max-width:360px;margin:0 auto;position:relative;display:none}
 .booth-frame-wrap{position:relative;width:100%}
 .booth-video-el{position:absolute;object-fit:cover;border-radius:4px;
+  transform:scaleX(-1);
   /* aligned to transparent photo area in Wed_polaroid_frame.png */
   top:22%;left:15%;width:70%;height:54%;display:block}
 .booth-frame-img{width:100%;height:auto;display:block;position:relative;z-index:2;
@@ -271,7 +275,7 @@ canvas#booth-canvas{display:none}
   background:linear-gradient(180deg,#0A1828 0%,#121820 100%)}
 .wb-header{text-align:center;margin-bottom:40px}
 .wb-eye{font-family:var(--fh);font-size:13px;color:var(--sage-l);
-  letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px}
+  letter-spacing:0.14em;text-transform:uppercase;text-align:center;margin:32px 0 0}
 .wb-title{font-family:var(--fd);font-weight:300;
   font-size:clamp(38px,9.5vw,44px);color:white;margin-bottom:8px}
 .wb-title em{color:var(--terra-l);font-style:italic}
@@ -395,12 +399,6 @@ canvas#booth-canvas{display:none}
         <circle class="seal-fill" cx="40" cy="40" r="38" fill="#C4714A"/>
         <circle cx="40" cy="40" r="32" fill="none" stroke="rgba(255,255,255,0.28)" stroke-width="1" stroke-dasharray="3 3"/>
         <text x="40" y="49" text-anchor="middle" font-family="'Cormorant Garamond',Georgia,serif" font-style="italic" font-weight="600" font-size="29" letter-spacing="-1" fill="rgba(255,255,255,0.92)">NN</text>
-        <g class="crack">
-          <line x1="40" y1="8"  x2="33" y2="28" stroke="rgba(255,255,255,0.7)" stroke-width="1.3" stroke-linecap="round"/>
-          <line x1="40" y1="8"  x2="49" y2="26" stroke="rgba(255,255,255,0.6)" stroke-width="1.1" stroke-linecap="round"/>
-          <line x1="18" y1="32" x2="34" y2="38" stroke="rgba(255,255,255,0.55)" stroke-width="1" stroke-linecap="round"/>
-          <line x1="62" y1="34" x2="46" y2="38" stroke="rgba(255,255,255,0.55)" stroke-width="1" stroke-linecap="round"/>
-        </g>
       </svg>
     </div>
     <div class="env-hint">tap the seal to open</div>
@@ -462,39 +460,12 @@ canvas#booth-canvas{display:none}
   </div>
 </section>
 
-<!-- ── VENUE VIDEO ── -->
+<!-- ── VENUE SCRUB ── -->
 <section id="venue-section">
-  <div class="venue-sticky">
-    <video id="venue-video" muted playsinline preload="auto"
-      style="width:100%;height:100%;object-fit:cover;display:block">
-      <source src="Web_assets/Wed_video_land.mp4" type="video/mp4"/>
-    </video>
-    <div class="venue-loader" id="venue-loader">
-      <span>Loading…</span>
-    </div>
-  </div>
-</section>
-
-<!-- ── COUNTDOWN ── -->
-<section id="countdown">
-  <div class="cd-label reveal">Counting down</div>
-  <div class="cd-grid reveal d1">
-    <div class="cd-unit">
-      <div class="cd-box"><span class="cd-num" id="cd-d">--</span></div>
-      <span class="cd-name">Days</span>
-    </div>
-    <div class="cd-unit">
-      <div class="cd-box"><span class="cd-num" id="cd-h">--</span></div>
-      <span class="cd-name">Hours</span>
-    </div>
-    <div class="cd-unit">
-      <div class="cd-box"><span class="cd-num" id="cd-m">--</span></div>
-      <span class="cd-name">Minutes</span>
-    </div>
-    <div class="cd-unit">
-      <div class="cd-box"><span class="cd-num" id="cd-s">--</span></div>
-      <span class="cd-name">Seconds</span>
-    </div>
+  <div class="venue-sticky" id="venue-sticky">
+    <canvas id="venue-canvas"></canvas>
+    <div class="venue-vignette"></div>
+    <div class="venue-loader" id="venue-loader"><div class="venue-loader-fill" id="venue-loader-fill"></div></div>
   </div>
 </section>
 
@@ -547,6 +518,28 @@ canvas#booth-canvas{display:none}
   </div>
 </section>
 
+<section id="countdown">
+  <div class="cd-label reveal">Counting down</div>
+  <div class="cd-grid reveal d1">
+    <div class="cd-unit">
+      <div class="cd-box"><span class="cd-num" id="cd-d">--</span></div>
+      <span class="cd-name">Days</span>
+    </div>
+    <div class="cd-unit">
+      <div class="cd-box"><span class="cd-num" id="cd-h">--</span></div>
+      <span class="cd-name">Hours</span>
+    </div>
+    <div class="cd-unit">
+      <div class="cd-box"><span class="cd-num" id="cd-m">--</span></div>
+      <span class="cd-name">Minutes</span>
+    </div>
+    <div class="cd-unit">
+      <div class="cd-box"><span class="cd-num" id="cd-s">--</span></div>
+      <span class="cd-name">Seconds</span>
+    </div>
+  </div>
+</section>
+
 <!-- ── LETTER ── -->
 <section id="letter">
   <div style="max-width:580px;margin:0 auto;text-align:center">
@@ -590,11 +583,9 @@ canvas#booth-canvas{display:none}
 <section id="wishboard">
   <div style="max-width:900px;margin:0 auto">
     <div class="wb-header">
-      <div class="wb-eye reveal">leave a dua or wish</div>
-      <h2 class="wb-title reveal d1">Your <em>Blessings</em></h2>
+      <h2 class="wb-title reveal">Blessings <em>Board</em></h2>
     </div>
-    <div class="corkboard reveal d2">
-      <div class="board-label" id="board-label">Wish board</div>
+    <div class="corkboard reveal d1">
       <div class="notes-grid" id="notes-grid">
         <!-- Hardcoded pinned family notes -->
         <div class="note note-pinned">
@@ -614,6 +605,7 @@ canvas#booth-canvas{display:none}
         <button id="show-more-btn">Show more wishes ↓</button>
       </div>
     </div>
+    <div class="wb-eye reveal d2">Leave a wish</div>
     <div class="wish-form reveal d3">
       <label for="w-name">Your name</label>
       <input type="text" id="w-name" autocomplete="off" maxlength="40"/>
@@ -757,7 +749,6 @@ function openEnvelope(){
     ov.classList.add('gone');
     page.style.opacity='1';
     $('music-btn').style.display='flex';
-    initBoothOnView();
   },1050);
   setTimeout(()=>{
     const ov=document.getElementById('env-overlay');
@@ -866,55 +857,126 @@ addEventListener('scroll',()=>{
   skyEl.style.background=`linear-gradient(180deg,${skyColor(p)} 0%,transparent 100%)`;
 },{passive:true});
 
-/* ── VIDEO SCRUB ─────────────────────── */
-const vSec=$('venue-section'),vVid=$('venue-video'),vLoader=$('venue-loader');
-let vReady=false,vSeeking=false,vPendingTime=null,vTicking=false;
-vVid.addEventListener('canplaythrough',()=>{vReady=true;vLoader.classList.add('hidden')});
-vVid.addEventListener('loadedmetadata',()=>{
-  // priming the decoder with a tiny seek avoids a black first frame on iOS/Android
-  vVid.currentTime=0.001;
-});
-// Fallback: hide loader after 8s even if not fully loaded
-setTimeout(()=>vLoader.classList.add('hidden'),8000);
+/* ── VENUE SCRUB (image-sequence) ─────── */
+(function(){
+  const TOTAL = 360, STEP = 1, PAD = 3;
+  const FRAME_PATH = 'Web_assets/Frames_3/';
+  const LAST_FRAME_SRC = FRAME_PATH + 'last_frame.png';
 
-function getScrubProgress(){
-  const rect=vSec.getBoundingClientRect();
-  const total=vSec.offsetHeight-innerHeight;
-  if(total<=0) return 0;
-  return Math.max(0,Math.min(1,-rect.top/total));
-}
+  // Pacing: a short hold on frame 1 once pinned, then the scrub itself
+  // (tuned to feel like a 900vh-tall scrub), then a hold on last_frame.png at the end.
+  const PREROLL_VH = 100, CORE_VH = 900, HOLD_VH = 150;
+  const TOTAL_PINNED_VH = PREROLL_VH + CORE_VH + HOLD_VH;
+  const PREROLL_FRAC = PREROLL_VH / TOTAL_PINNED_VH;
+  const CORE_END_FRAC = (PREROLL_VH + CORE_VH) / TOTAL_PINNED_VH;
 
-function requestSeek(time){
-  // Only one seek is ever in flight. If a seek is already running, remember
-  // the latest requested time and apply it the moment the current one settles —
-  // this is what stops mobile browsers from queuing up and "jumping" after scroll ends.
-  if(vSeeking){vPendingTime=time;return}
-  vSeeking=true;
-  vVid.currentTime=time;
-}
-vVid.addEventListener('seeked',()=>{
-  vSeeking=false;
-  if(vPendingTime!==null){
-    const t=vPendingTime;vPendingTime=null;
-    requestSeek(t);
+  const section = $('venue-section');
+  const canvas  = $('venue-canvas');
+  const ctx     = canvas.getContext('2d');
+  const loadBar  = $('venue-loader');
+  const loadFill = $('venue-loader-fill');
+
+  const images = new Array(TOTAL);
+  const lastFrameImg = new Image();
+  let lastFrameReady = false;
+  let loadedCount = 0;
+  let allFramesReady = false;
+  let currentDisplay = 'last';
+
+  function pad(n){ return String(n).padStart(PAD, '0'); }
+
+  function fitAndDraw(img){
+    if(!img || !img.naturalWidth) return;
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const cw = canvas.clientWidth, ch = canvas.clientHeight;
+    const wantW = Math.round(cw*dpr), wantH = Math.round(ch*dpr);
+    if(canvas.width !== wantW || canvas.height !== wantH){
+      canvas.width = wantW; canvas.height = wantH;
+    }
+    const iw = img.naturalWidth, ih = img.naturalHeight;
+    const scale = Math.max(canvas.width/iw, canvas.height/ih);
+    const dw = iw*scale, dh = ih*scale;
+    const dx = (canvas.width-dw)/2, dy = (canvas.height-dh)/2;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img, dx, dy, dw, dh);
   }
-});
 
-function applyScrub(){
-  vTicking=false;
-  if(!vSec||!vVid||!vReady||!vVid.duration) return;
-  const prog=getScrubProgress();
-  const target=prog*vVid.duration;
-  if(Math.abs(target-vVid.currentTime)<0.015) return;
-  requestSeek(target);
-}
-function onVideoScroll(){
-  if(!vTicking){
-    vTicking=true;
-    requestAnimationFrame(applyScrub);
+  function showLastFrame(){ currentDisplay = 'last'; if(lastFrameReady) fitAndDraw(lastFrameImg); }
+  function showFrame(idx){ currentDisplay = idx; const img = images[idx-1]; if(img && img.complete && img.naturalWidth) fitAndDraw(img); }
+
+  lastFrameImg.fetchPriority = 'high';
+  lastFrameImg.onload = ()=>{ lastFrameReady = true; if(currentDisplay === 'last') fitAndDraw(lastFrameImg); };
+  lastFrameImg.src = LAST_FRAME_SRC;
+
+  function preloadFrames(){
+    for(let i=1;i<=TOTAL;i++){
+      const img = new Image();
+      img.onload = img.onerror = function(){
+        loadedCount++;
+        loadFill.style.width = Math.round(loadedCount/TOTAL*100)+'%';
+        if(loadedCount === TOTAL) onAllFramesLoaded();
+      };
+      img.src = FRAME_PATH + pad(i) + '.webp';
+      images[i-1] = img;
+    }
   }
-}
-addEventListener('scroll',onVideoScroll,{passive:true});
+
+  function onAllFramesLoaded(){
+    const oldHeight = section.offsetHeight;
+    // Compensate scroll position if (and only if) the person has already
+    // scrolled to or past where this section begins -- keeps the page from
+    // visibly jumping when the section grows to its full scrub height.
+    const sectionTopAbs = window.scrollY + section.getBoundingClientRect().top;
+    const oldScrollY = window.scrollY;
+
+    section.classList.add('ready');
+    allFramesReady = true;
+
+    const newHeight = section.offsetHeight;
+    const delta = newHeight - oldHeight;
+
+    if(oldScrollY >= sectionTopAbs){
+      window.scrollTo(0, oldScrollY + delta);
+    }
+    loadBar.classList.add('hidden');
+    update();
+  }
+
+  function getPinnedFrac(){
+    const rect = section.getBoundingClientRect();
+    const pinnedTotal = section.offsetHeight - window.innerHeight;
+    if(pinnedTotal <= 0) return 0;
+    return Math.max(0, Math.min(1, -rect.top/pinnedTotal));
+  }
+
+  let scrollTicking = false;
+  function onScroll(){ if(!scrollTicking){ scrollTicking = true; requestAnimationFrame(update); } }
+
+  function update(){
+    scrollTicking = false;
+    if(!allFramesReady){ showLastFrame(); return; }
+    const frac = getPinnedFrac();
+    if(frac <= PREROLL_FRAC){
+      showFrame(1);
+    }else if(frac <= CORE_END_FRAC){
+      const t = (frac - PREROLL_FRAC) / (CORE_END_FRAC - PREROLL_FRAC);
+      let idx = Math.round(t*(TOTAL-1)) + 1;
+      idx = Math.max(1, Math.min(TOTAL, idx));
+      if(STEP > 1){ idx = Math.max(1, Math.round(idx/STEP)*STEP); }
+      showFrame(idx);
+    }else{
+      showLastFrame();
+    }
+  }
+
+  window.addEventListener('scroll', onScroll, {passive:true});
+  window.addEventListener('resize', ()=>{
+    requestAnimationFrame(()=>{ if(currentDisplay === 'last') fitAndDraw(lastFrameImg); else showFrame(currentDisplay); });
+  });
+
+  preloadFrames();
+  update();
+})();
 
 /* ── COUNTDOWN ───────────────────────── */
 const TARGET=new Date('2026-10-19T16:00:00+05:30');
@@ -979,7 +1041,7 @@ const boothFrameImg=$('booth-frame-img');
 let boothStream=null,frameLoaded=false;
 
 boothFrameImg.addEventListener('load',()=>{frameLoaded=true});
-if(boothFrameImg.complete) frameLoaded=true;
+if(boothFrameImg.complete && boothFrameImg.naturalWidth) frameLoaded=true;
 
 async function startCamera(){
   try{
@@ -992,17 +1054,6 @@ async function startCamera(){
   }catch(e){
     toast('Camera permission needed 📷 — please allow access and try again.');
   }
-}
-
-function initBoothOnView(){
-  const obs=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{
-      if(e.isIntersecting&&navigator.mediaDevices){
-        startCamera();obs.disconnect();
-      }
-    });
-  },{threshold:0.3});
-  obs.observe(document.getElementById('photobooth'));
 }
 
 $('booth-start').addEventListener('click',startCamera);
@@ -1029,14 +1080,13 @@ boothSnap.addEventListener('click',()=>{
   if(frameLoaded) c.drawImage(boothFrameImg,0,0,fw,fh);
   const url=boothCanvas.toDataURL('image/png');
   boothDl.href=url;boothDl.style.display='inline-flex';
-  boothSnap.style.display='none';
-  toast('📸 Looking great! Tap Save to download.');
+  toast('📸 Looking great! Snap again or tap Save.');
 });
 
 /* ── WISHBOARD ───────────────────────── */
 const wName=$('w-name'),wText=$('w-text'),wSubmit=$('w-submit'),wLbl=$('w-lbl');
 const wChar=$('w-char'),notesGrid=$('notes-grid');
-const boardLabel=$('board-label'),showMoreBtn=$('show-more-btn');
+const showMoreBtn=$('show-more-btn');
 const CHAR_LIMIT=160,PINNED=3,BATCH=9;
 let allWishes=[],shownCount=0;
 

@@ -170,14 +170,13 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 .nik-details .dot{width:3px;height:3px;border-radius:50%;background:var(--gold);flex-shrink:0}
 
 /* ── VENUE SCRUB (image-sequence) ── */
-#venue-section{height:100vh;position:relative;background:#000;overflow:hidden}
-#venue-section.ready{height:1250vh}
+#venue-section{height:1000vh;position:relative;background:#000}
 .venue-sticky{position:sticky;top:0;height:100vh;width:100%;overflow:hidden;
   display:flex;align-items:center;justify-content:center;background:#000}
-#venue-canvas{display:block;width:100%;height:100%}
 @media(max-width:768px){
-  #venue-canvas{height:auto;aspect-ratio:3/4;max-height:100%}
+  .venue-sticky{height:calc(100vw * 4 / 3)}
 }
+#venue-canvas{display:block;width:100%;height:100%;object-fit:cover}
 .venue-vignette{position:absolute;inset:0;pointer-events:none;z-index:2;
   background:linear-gradient(to bottom,rgba(0,0,0,0.35) 0%,transparent 18%,
     transparent 78%,rgba(0,0,0,0.45) 100%)}
@@ -186,10 +185,20 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 .venue-loader.hidden{opacity:0}
 .venue-loader-fill{height:100%;width:0%;background:var(--terra);transition:width 0.2s ease}
 
+/* ── LAST FRAME PLACEHOLDER ── */
+#last-frame-section{width:100%;overflow:hidden;background:#000;
+  transition:max-height 0.6s ease,opacity 0.5s ease;
+  max-height:100vh}
+#last-frame-section.hidden{max-height:0;opacity:0;pointer-events:none}
+#last-frame-img{display:block;width:100%;height:auto}
+@media(max-width:768px){
+  #last-frame-section{max-height:calc(100vw * 4 / 3)}
+}
+
 /* ── COUNTDOWN ── */
 #countdown{text-align:center;
   padding:clamp(60px,9vw,100px) clamp(20px,5vw,60px);
-  background:rgba(242,235,224,0.97);position:relative;z-index:1}
+  background:rgba(250,247,242,0.96);position:relative;z-index:1}
 .cd-label{font-family:var(--fd);font-style:italic;font-weight:300;
   font-size:clamp(34px,8.5vw,44px);color:var(--ink);margin-bottom:32px}
 .cd-grid{display:flex;justify-content:center;gap:clamp(12px,3vw,28px);flex-wrap:wrap}
@@ -208,7 +217,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 /* ── LOCATION ── */
 #location{text-align:center;
   padding:clamp(60px,9vw,100px) clamp(20px,5vw,60px);
-  background:rgba(250,247,242,0.96);position:relative;z-index:1}
+  background:rgba(242,235,224,0.97);position:relative;z-index:1}
 .loc-t{font-family:var(--fd);font-weight:300;
   font-size:clamp(38px,9.5vw,44px);color:var(--ink);margin-bottom:32px}
 .loc-t em{color:var(--terra);font-style:italic}
@@ -468,6 +477,11 @@ canvas#booth-canvas{display:none}
     <div class="venue-loader" id="venue-loader"><div class="venue-loader-fill" id="venue-loader-fill"></div></div>
   </div>
 </section>
+
+<!-- ── LAST FRAME PLACEHOLDER (visible while frames load, hides once ready) ── -->
+<div id="last-frame-section">
+  <img id="last-frame-img" src="Web_assets/Frames_3/last_frame.png" alt=""/>
+</div>
 
 <!-- ── LOCATION ── -->
 <section id="location">
@@ -861,121 +875,83 @@ addEventListener('scroll',()=>{
 (function(){
   const TOTAL = 360, STEP = 1, PAD = 3;
   const FRAME_PATH = 'Web_assets/Frames_3/';
-  const LAST_FRAME_SRC = FRAME_PATH + 'last_frame.png';
 
-  // Pacing: a short hold on frame 1 once pinned, then the scrub itself
-  // (tuned to feel like a 900vh-tall scrub), then a hold on last_frame.png at the end.
-  const PREROLL_VH = 100, CORE_VH = 900, HOLD_VH = 150;
-  const TOTAL_PINNED_VH = PREROLL_VH + CORE_VH + HOLD_VH;
-  const PREROLL_FRAC = PREROLL_VH / TOTAL_PINNED_VH;
-  const CORE_END_FRAC = (PREROLL_VH + CORE_VH) / TOTAL_PINNED_VH;
-
-  const section = $('venue-section');
-  const canvas  = $('venue-canvas');
-  const ctx     = canvas.getContext('2d');
-  const loadBar  = $('venue-loader');
-  const loadFill = $('venue-loader-fill');
+  const section   = $('venue-section');
+  const canvas    = $('venue-canvas');
+  const ctx       = canvas.getContext('2d');
+  const loadBar   = $('venue-loader');
+  const loadFill  = $('venue-loader-fill');
+  const lastSec   = $('last-frame-section');
 
   const images = new Array(TOTAL);
-  const lastFrameImg = new Image();
-  let lastFrameReady = false;
   let loadedCount = 0;
-  let allFramesReady = false;
-  let currentDisplay = 'last';
+  let ready = false;
+  let currentFrame = 1;
 
-  function pad(n){ return String(n).padStart(PAD, '0'); }
+  function pad(n){ return String(n).padStart(PAD,'0'); }
 
   function fitAndDraw(img){
     if(!img || !img.naturalWidth) return;
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = Math.min(window.devicePixelRatio||1, 2);
     const cw = canvas.clientWidth, ch = canvas.clientHeight;
     const wantW = Math.round(cw*dpr), wantH = Math.round(ch*dpr);
-    if(canvas.width !== wantW || canvas.height !== wantH){
-      canvas.width = wantW; canvas.height = wantH;
+    if(canvas.width!==wantW || canvas.height!==wantH){
+      canvas.width=wantW; canvas.height=wantH;
     }
-    const iw = img.naturalWidth, ih = img.naturalHeight;
-    const scale = Math.max(canvas.width/iw, canvas.height/ih);
-    const dw = iw*scale, dh = ih*scale;
-    const dx = (canvas.width-dw)/2, dy = (canvas.height-dh)/2;
+    const iw=img.naturalWidth, ih=img.naturalHeight;
+    const scale=Math.max(canvas.width/iw, canvas.height/ih);
+    const dw=iw*scale, dh=ih*scale;
+    const dx=(canvas.width-dw)/2, dy=(canvas.height-dh)/2;
     ctx.clearRect(0,0,canvas.width,canvas.height);
     ctx.drawImage(img, dx, dy, dw, dh);
   }
 
-  function showLastFrame(){ currentDisplay = 'last'; if(lastFrameReady) fitAndDraw(lastFrameImg); }
-  function showFrame(idx){ currentDisplay = idx; const img = images[idx-1]; if(img && img.complete && img.naturalWidth) fitAndDraw(img); }
-
-  lastFrameImg.fetchPriority = 'high';
-  lastFrameImg.onload = ()=>{ lastFrameReady = true; if(currentDisplay === 'last') fitAndDraw(lastFrameImg); };
-  lastFrameImg.src = LAST_FRAME_SRC;
-
-  function preloadFrames(){
+  function preload(){
     for(let i=1;i<=TOTAL;i++){
-      const img = new Image();
-      img.onload = img.onerror = function(){
+      const img=new Image();
+      img.onload=img.onerror=function(){
         loadedCount++;
-        loadFill.style.width = Math.round(loadedCount/TOTAL*100)+'%';
-        if(loadedCount === TOTAL) onAllFramesLoaded();
+        loadFill.style.width=Math.round(loadedCount/TOTAL*100)+'%';
+        if(i===1 && img.naturalWidth) fitAndDraw(img);
+        if(loadedCount===TOTAL){
+          ready=true;
+          loadBar.classList.add('hidden');
+          // hide the static last-frame placeholder section
+          if(lastSec) lastSec.classList.add('hidden');
+          fitAndDraw(images[currentFrame-1]);
+        }
       };
-      img.src = FRAME_PATH + pad(i) + '.webp';
-      images[i-1] = img;
+      img.src=FRAME_PATH+pad(i)+'.webp';
+      images[i-1]=img;
     }
   }
 
-  function onAllFramesLoaded(){
-    const oldHeight = section.offsetHeight;
-    // Compensate scroll position if (and only if) the person has already
-    // scrolled to or past where this section begins -- keeps the page from
-    // visibly jumping when the section grows to its full scrub height.
-    const sectionTopAbs = window.scrollY + section.getBoundingClientRect().top;
-    const oldScrollY = window.scrollY;
-
-    section.classList.add('ready');
-    allFramesReady = true;
-
-    const newHeight = section.offsetHeight;
-    const delta = newHeight - oldHeight;
-
-    if(oldScrollY >= sectionTopAbs){
-      window.scrollTo(0, oldScrollY + delta);
-    }
-    loadBar.classList.add('hidden');
-    update();
+  function getProgress(){
+    const rect=section.getBoundingClientRect();
+    const total=section.offsetHeight-window.innerHeight;
+    if(total<=0) return 0;
+    return Math.max(0,Math.min(1,-rect.top/total));
   }
 
-  function getPinnedFrac(){
-    const rect = section.getBoundingClientRect();
-    const pinnedTotal = section.offsetHeight - window.innerHeight;
-    if(pinnedTotal <= 0) return 0;
-    return Math.max(0, Math.min(1, -rect.top/pinnedTotal));
-  }
-
-  let scrollTicking = false;
-  function onScroll(){ if(!scrollTicking){ scrollTicking = true; requestAnimationFrame(update); } }
+  let ticking=false;
+  function onScroll(){ if(!ticking){ ticking=true; requestAnimationFrame(update); } }
 
   function update(){
-    scrollTicking = false;
-    if(!allFramesReady){ showLastFrame(); return; }
-    const frac = getPinnedFrac();
-    if(frac <= PREROLL_FRAC){
-      showFrame(1);
-    }else if(frac <= CORE_END_FRAC){
-      const t = (frac - PREROLL_FRAC) / (CORE_END_FRAC - PREROLL_FRAC);
-      let idx = Math.round(t*(TOTAL-1)) + 1;
-      idx = Math.max(1, Math.min(TOTAL, idx));
-      if(STEP > 1){ idx = Math.max(1, Math.round(idx/STEP)*STEP); }
-      showFrame(idx);
-    }else{
-      showLastFrame();
+    ticking=false;
+    if(!ready) return;
+    const prog=getProgress();
+    let idx=Math.min(TOTAL,Math.max(1,Math.round(prog*(TOTAL-1))+1));
+    if(STEP>1) idx=Math.max(1,Math.round(idx/STEP)*STEP);
+    if(idx!==currentFrame){
+      currentFrame=idx;
+      fitAndDraw(images[currentFrame-1]);
     }
   }
 
-  window.addEventListener('scroll', onScroll, {passive:true});
-  window.addEventListener('resize', ()=>{
-    requestAnimationFrame(()=>{ if(currentDisplay === 'last') fitAndDraw(lastFrameImg); else showFrame(currentDisplay); });
-  });
+  window.addEventListener('scroll',onScroll,{passive:true});
+  window.addEventListener('resize',()=>{ if(ready) fitAndDraw(images[currentFrame-1]); });
 
-  preloadFrames();
-  update();
+  preload();
 })();
 
 /* ── COUNTDOWN ───────────────────────── */

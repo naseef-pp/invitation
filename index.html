@@ -169,31 +169,20 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
   opacity:0.78;flex-wrap:wrap;justify-content:center}
 .nik-details .dot{width:3px;height:3px;border-radius:50%;background:var(--gold);flex-shrink:0}
 
-/* ── VENUE SCRUB (image-sequence) ── */
-#venue-section{height:1000vh;position:relative;background:#000}
+/* ── VENUE SCRUB (image-sequence, device-aware) ── */
+#venue-section{height:1000vh;position:relative;background:#000;display:none}
+#venue-section.visible{display:block}
 .venue-sticky{position:sticky;top:0;height:100vh;width:100%;overflow:hidden;
   display:flex;align-items:center;justify-content:center;background:#000}
-@media(max-width:768px){
-  .venue-sticky{height:calc(100vw * 4 / 3)}
-}
 #venue-canvas{display:block;width:100%;height:100%;object-fit:cover}
 .venue-vignette{position:absolute;inset:0;pointer-events:none;z-index:2;
   background:linear-gradient(to bottom,rgba(0,0,0,0.35) 0%,transparent 18%,
     transparent 78%,rgba(0,0,0,0.45) 100%)}
-.venue-loader{position:absolute;left:0;right:0;bottom:0;height:3px;
-  background:rgba(255,255,255,0.15);z-index:6;transition:opacity 0.5s ease}
-.venue-loader.hidden{opacity:0}
-.venue-loader-fill{height:100%;width:0%;background:var(--terra);transition:width 0.2s ease}
 
-/* ── LAST FRAME PLACEHOLDER ── */
-#last-frame-section{width:100%;overflow:hidden;background:#000;
-  transition:max-height 0.6s ease,opacity 0.5s ease;
-  max-height:100vh}
-#last-frame-section.hidden{max-height:0;opacity:0;pointer-events:none}
-#last-frame-img{display:block;width:100%;height:auto}
-@media(max-width:768px){
-  #last-frame-section{max-height:calc(100vw * 4 / 3)}
-}
+/* ── LAST FRAME PLACEHOLDER (shown until the device-correct scrub frames are ready) ── */
+#last-frame-section{width:100%;height:100vh;overflow:hidden;background:#000}
+#last-frame-section.hidden{display:none}
+#last-frame-img{display:block;width:100%;height:100%;object-fit:cover}
 
 /* ── COUNTDOWN ── */
 #countdown{text-align:center;
@@ -474,13 +463,12 @@ canvas#booth-canvas{display:none}
   <div class="venue-sticky" id="venue-sticky">
     <canvas id="venue-canvas"></canvas>
     <div class="venue-vignette"></div>
-    <div class="venue-loader" id="venue-loader"><div class="venue-loader-fill" id="venue-loader-fill"></div></div>
   </div>
 </section>
 
-<!-- ── LAST FRAME PLACEHOLDER (visible while frames load, hides once ready) ── -->
+<!-- ── LAST FRAME PLACEHOLDER (shown while device-correct frames are loading) ── -->
 <div id="last-frame-section">
-  <img id="last-frame-img" src="Web_assets/Frames_3/last_frame.png" alt=""/>
+  <img id="last-frame-img" src="" alt=""/>
 </div>
 
 <!-- ── LOCATION ── -->
@@ -871,29 +859,45 @@ addEventListener('scroll',()=>{
   skyEl.style.background=`linear-gradient(180deg,${skyColor(p)} 0%,transparent 100%)`;
 },{passive:true});
 
-/* ── VENUE SCRUB (image-sequence) ─────── */
+/* ── VENUE SCRUB (image-sequence, device-aware) ─────── */
 (function(){
-  const TOTAL = 360, STEP = 1, PAD = 3;
-  const FRAME_PATH = 'Web_assets/Frames_3/';
+  // ── Device detection ─────────────────────────────
+  // Portrait frames (mobile) vs landscape frames (desktop).
+  // We match on the same 768px breakpoint used throughout the CSS.
+  const isMobile = window.matchMedia('(max-width:768px)').matches;
 
-  const section   = $('venue-section');
-  const canvas    = $('venue-canvas');
-  const ctx       = canvas.getContext('2d');
-  const loadBar   = $('venue-loader');
-  const loadFill  = $('venue-loader-fill');
-  const lastSec   = $('last-frame-section');
+  const TOTAL     = isMobile ? 240 : 360;
+  const STEP      = 1;
+  const PAD       = 3;
+  const FRAME_PATH = isMobile ? 'Web_assets/Frames_4/' : 'Web_assets/Frames_3/';
+  const PLACEHOLDER = isMobile
+    ? 'Web_assets/Frames_4/last_frame_port.png'
+    : 'Web_assets/Frames_3/last_frame.png';
 
+  // ── Element refs ──────────────────────────────────
+  const section  = $('venue-section');
+  const canvas   = $('venue-canvas');
+  const ctx      = canvas.getContext('2d');
+  const lastSec  = $('last-frame-section');
+  const lastImg  = $('last-frame-img');
+
+  // Set the correct placeholder image immediately (before any frames load)
+  lastImg.src = PLACEHOLDER;
+
+  // ── State ─────────────────────────────────────────
   const images = new Array(TOTAL);
-  let loadedCount = 0;
-  let ready = false;
+  let loadedCount  = 0;
+  let ready        = false;
   let currentFrame = 1;
 
+  // ── Helpers ───────────────────────────────────────
   function pad(n){ return String(n).padStart(PAD,'0'); }
 
+  // Cover-fit draw: always fills the canvas without letterboxing
   function fitAndDraw(img){
     if(!img || !img.naturalWidth) return;
-    const dpr = Math.min(window.devicePixelRatio||1, 2);
-    const cw = canvas.clientWidth, ch = canvas.clientHeight;
+    const dpr  = Math.min(window.devicePixelRatio||1, 2);
+    const cw   = canvas.clientWidth, ch = canvas.clientHeight;
     const wantW = Math.round(cw*dpr), wantH = Math.round(ch*dpr);
     if(canvas.width!==wantW || canvas.height!==wantH){
       canvas.width=wantW; canvas.height=wantH;
@@ -906,26 +910,29 @@ addEventListener('scroll',()=>{
     ctx.drawImage(img, dx, dy, dw, dh);
   }
 
+  // ── Preload all frames ────────────────────────────
   function preload(){
     for(let i=1;i<=TOTAL;i++){
       const img=new Image();
       img.onload=img.onerror=function(){
         loadedCount++;
-        loadFill.style.width=Math.round(loadedCount/TOTAL*100)+'%';
-        if(i===1 && img.naturalWidth) fitAndDraw(img);
-        if(loadedCount===TOTAL){
-          ready=true;
-          loadBar.classList.add('hidden');
-          // hide the static last-frame placeholder section
-          if(lastSec) lastSec.classList.add('hidden');
-          fitAndDraw(images[currentFrame-1]);
-        }
+        if(loadedCount===TOTAL) onAllLoaded();
       };
       img.src=FRAME_PATH+pad(i)+'.webp';
       images[i-1]=img;
     }
   }
 
+  function onAllLoaded(){
+    ready=true;
+    // Swap visibility: hide placeholder, reveal scrub section
+    lastSec.classList.add('hidden');
+    section.classList.add('visible');
+    // Draw whichever frame the current scroll position calls for
+    fitAndDraw(images[currentFrame-1]);
+  }
+
+  // ── Scroll scrub ──────────────────────────────────
   function getProgress(){
     const rect=section.getBoundingClientRect();
     const total=section.offsetHeight-window.innerHeight;

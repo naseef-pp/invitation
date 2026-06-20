@@ -647,12 +647,12 @@ canvas#booth-canvas{display:none}
 <script>
 /* ── FIREBASE ────────────────────────── */
 const FB_CONFIG={
-  apiKey:"REPLACE_API_KEY",
-  authDomain:"REPLACE.firebaseapp.com",
-  projectId:"REPLACE_PROJECT_ID",
-  storageBucket:"REPLACE.appspot.com",
-  messagingSenderId:"REPLACE_SENDER_ID",
-  appId:"REPLACE_APP_ID"
+  apiKey:"AIzaSyBwpJYHSbbFmRIAq7yDSoLsSBBaG8_X4SE",
+  authDomain:"nn-wedding-17ffc.firebaseapp.com",
+  projectId:"nn-wedding-17ffc",
+  storageBucket:"nn-wedding-17ffc.firebasestorage.app",
+  messagingSenderId:"392137581529",
+  appId:"1:392137581529:web:c8234b2deb1484f17b2fc8"
 };
 let db=null,fbReady=false;
 try{firebase.initializeApp(FB_CONFIG);db=firebase.firestore();fbReady=true}
@@ -1110,7 +1110,7 @@ showMoreBtn.addEventListener('click',()=>{
   shownCount=Math.min(allWishes.length,shownCount+BATCH);renderWishes();
 });
 if(fbReady&&db){
-  db.collection('wishes').where('approved','==',true)
+  db.collection('wishes').where('status','==','approved')
     .orderBy('timestamp','desc').limit(100)
     .onSnapshot(snap=>{
       allWishes=[];snap.forEach(doc=>{const d=doc.data();allWishes.push({name:d.name,wish:d.wish})});
@@ -1124,7 +1124,7 @@ wSubmit.addEventListener('click',async()=>{
   if(!fbReady||!db){toast('Firebase not configured yet!');return}
   wLbl.textContent='Sending…';wSubmit.disabled=true;
   try{
-    await db.collection('wishes').add({name,wish,approved:false,
+    await db.collection('wishes').add({name,wish,status:'pending',
       timestamp:firebase.firestore.FieldValue.serverTimestamp()});
     wName.value='';wText.value='';wChar.textContent=CHAR_LIMIT;
     wLbl.textContent='Sent! 🌸';

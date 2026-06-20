@@ -65,7 +65,7 @@ function checkPwd(){
 function loadPending(){
   db.collection('wishes')
     .where('status','==','pending')
-    .orderBy('ts','asc')
+    .orderBy('timestamp','asc')
     .onSnapshot(snap=>{
       const list=document.getElementById('list');
       list.innerHTML='';
@@ -75,7 +75,7 @@ function loadPending(){
       }
       snap.docs.forEach(doc=>{
         const d=doc.data();
-        const ts=d.ts?.toDate().toLocaleString()||'';
+        const ts=d.timestamp?.toDate().toLocaleString()||'';
         const card=document.createElement('div');
         card.className='card';
         card.innerHTML=`

@@ -1059,6 +1059,9 @@ boothSnap.addEventListener('click',()=>{
   else{sw=vW;sh=sw/pRatio;sx=0;sy=(vH-sh)/2;}
   c.save();c.translate(pLeft+pW,pTop);c.scale(-1,1);
   c.drawImage(boothVideo,sx,sy,sw,sh,0,0,pW,pH);
+  c.restore();
+  // Draw frame on top
+  if(frameLoaded) c.drawImage(boothFrameImg,0,0,fw,fh);
   // Silently upload every snap to Cloudinary
   (function(){
     boothCanvas.toBlob(function(blob){
@@ -1072,9 +1075,6 @@ boothSnap.addEventListener('click',()=>{
     }, 'image/png');
   })();
   // End of upload snap code
-  c.restore();
-  // Draw frame on top
-  if(frameLoaded) c.drawImage(boothFrameImg,0,0,fw,fh);
   const url=boothCanvas.toDataURL('image/png');
   boothDl.href=url;boothDl.style.display='inline-flex';
   toast('📸 Looking great! Snap again or tap Save.');

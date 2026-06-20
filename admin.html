@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wish Admin</title>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<style>
+  body{font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#f5f5f5}
+  h1{font-size:20px;margin-bottom:20px}
+  .card{background:#fff;border-radius:8px;padding:16px;margin-bottom:12px;
+    box-shadow:0 1px 4px rgba(0,0,0,0.1)}
+  .name{font-weight:bold;margin-bottom:6px}
+  .wish{color:#444;margin-bottom:12px;line-height:1.5}
+  .ts{font-size:11px;color:#999;margin-bottom:12px}
+  .btns{display:flex;gap:8px}
+  button{padding:8px 18px;border:none;border-radius:6px;cursor:pointer;font-size:14px}
+  .approve{background:#4CAF50;color:#fff}
+  .reject{background:#f44336;color:#fff}
+  #login{display:flex;flex-direction:column;gap:12px;max-width:300px;margin:80px auto}
+  #login input{padding:10px;border:1px solid #ddd;border-radius:6px;font-size:15px}
+  #login button{background:#C4714A;color:#fff}
+  #main{display:none}
+  .empty{color:#999;text-align:center;padding:40px}
+</style>
+</head>
+<body>
+
+<div id="login">
+  <h2 style="text-align:center">Wish Admin</h2>
+  <input type="password" id="pwd" placeholder="Password"/>
+  <button onclick="checkPwd()">Enter</button>
+</div>
+
+<div id="main">
+  <h1>Pending Wishes</h1>
+  <div id="list"></div>
+</div>
+
+<script>
+const ADMIN_PASSWORD = 'naseef2026';
+
+const firebaseConfig={
+  apiKey:"AIzaSyBwpJYHSbbFmRIAq7yDSoLsSBBaG8_X4SE",
+  authDomain:"nn-wedding-17ffc.firebaseapp.com",
+  projectId:"nn-wedding-17ffc",
+  storageBucket:"nn-wedding-17ffc.firebasestorage.app",
+  messagingSenderId:"392137581529",
+  appId:"1:392137581529:web:c8234b2deb1484f17b2fc8"
+};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
+
+function checkPwd(){
+  if(document.getElementById('pwd').value===ADMIN_PASSWORD){
+    document.getElementById('login').style.display='none';
+    document.getElementById('main').style.display='block';
+    loadPending();
+  }else{
+    alert('Wrong password');
+  }
+}
+
+function loadPending(){
+  db.collection('wishes')
+    .where('status','==','pending')
+    .orderBy('ts','asc')
+    .onSnapshot(snap=>{
+      const list=document.getElementById('list');
+      list.innerHTML='';
+      if(snap.empty){
+        list.innerHTML='<div class="empty">No pending wishes 🎉</div>';
+        return;
+      }
+      snap.docs.forEach(doc=>{
+        const d=doc.data();
+        const ts=d.ts?.toDate().toLocaleString()||'';
+        const card=document.createElement('div');
+        card.className='card';
+        card.innerHTML=`
+          <div class="name">${esc(d.name)}</div>
+          <div class="wish">${esc(d.wish)}</div>
+          <div class="ts">${ts}</div>
+          <div class="btns">
+            <button class="approve" onclick="approve('${doc.id}',this)">✅ Approve</button>
+            <button class="reject" onclick="reject('${doc.id}',this)">❌ Reject</button>
+          </div>`;
+        list.appendChild(card);
+      });
+    });
+}
+
+function approve(id,btn){
+  btn.disabled=true;
+  db.collection('wishes').doc(id).update({status:'approved'});
+}
+
+function reject(id,btn){
+  btn.disabled=true;
+  db.collection('wishes').doc(id).delete();
+}
+
+function esc(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+</script>
+</body>
+</html>

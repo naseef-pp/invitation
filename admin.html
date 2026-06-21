@@ -161,10 +161,10 @@ function loadPending(){
     .onSnapshot(snap=>{
       const list = document.getElementById('pending-list');
       const count = document.getElementById('pending-count');
-      list.innerHTML = '';
+      list.HTML = '';
       count.textContent = snap.size;
       if(snap.empty){
-        list.innerHTML = '<div class="empty">No pending wishes 🎉</div>';
+        list.HTML = '<div class="empty">No pending wishes 🎉</div>';
         return;
       }
       snap.docs.forEach(doc=>{
@@ -210,8 +210,12 @@ function loadApproved(){
           <div class="wish">${esc(d.wish)}</div>
           <div class="ts">${fmt(d.timestamp)}</div>
           <div class="btns">
-            <button class="btn-undo" onclick="undo('${doc.id}',this)">↩️ Move to Pending</button>
+            <button class="btn-approve" onclick="approve('${doc.id}',this)">✅ Approve</button>
+            <button class="btn-reject">❌ Reject</button>
           </div>`;
+        card.querySelector('.btn-reject').addEventListener('click', function(){
+          askReject(doc.id, d.name, d.wish);
+        });
         list.appendChild(card);
       });
     });

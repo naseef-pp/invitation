@@ -711,12 +711,12 @@ if(guestName){
   }
 }
 
-// Hero badge — "Hai Name, the wedding of" or default "The wedding of"
+// Hero badge — "Dear Name, the wedding of" or default "The wedding of"
 (()=>{
   const badge=$('hero-badge');
   if(!badge) return;
   if(guestName){
-    badge.innerHTML='Hai <strong>'+esc(guestName)+'</strong>, the wedding of';
+    badge.innerHTML='Dear <strong>'+esc(guestName)+'</strong>, the wedding of';
   }
 })();
 

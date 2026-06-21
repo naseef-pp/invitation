@@ -1127,8 +1127,8 @@ wSubmit.addEventListener('click',async()=>{
     await db.collection('wishes').add({name,wish,status:'pending',
       timestamp:firebase.firestore.FieldValue.serverTimestamp()});
     wName.value='';wText.value='';wChar.textContent=CHAR_LIMIT;
-    wLbl.textContent='Sent! 🌸';
-    toast('Your wish is in — it will appear once approved 🤍');
+    wLbl.textContent='Thankyou🤍';
+    toast('Your wish is in, will be pinned soon 🤍');
     setTimeout(()=>{wLbl.textContent='Pin it 📌';wSubmit.disabled=false},3000);
   }catch(e){
     wLbl.textContent='Pin it 📌';wSubmit.disabled=false;

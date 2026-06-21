@@ -7,102 +7,225 @@
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <style>
-  body{font-family:sans-serif;max-width:600px;margin:0 auto;padding:20px;background:#f5f5f5}
-  h1{font-size:20px;margin-bottom:20px}
-  .card{background:#fff;border-radius:8px;padding:16px;margin-bottom:12px;
-    box-shadow:0 1px 4px rgba(0,0,0,0.1)}
-  .name{font-weight:bold;margin-bottom:6px}
-  .wish{color:#444;margin-bottom:12px;line-height:1.5}
-  .ts{font-size:11px;color:#999;margin-bottom:12px}
-  .btns{display:flex;gap:8px}
-  button{padding:8px 18px;border:none;border-radius:6px;cursor:pointer;font-size:14px}
-  .approve{background:#4CAF50;color:#fff}
-  .reject{background:#f44336;color:#fff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:sans-serif;max-width:640px;margin:0 auto;padding:20px;
+    background:#f5f5f5;min-height:100vh}
+
+  /* ── Login ── */
   #login{display:flex;flex-direction:column;gap:12px;max-width:300px;margin:80px auto}
-  #login input{padding:10px;border:1px solid #ddd;border-radius:6px;font-size:15px}
-  #login button{background:#C4714A;color:#fff}
+  #login h2{text-align:center;font-size:22px;margin-bottom:8px}
+  #login input{padding:12px;border:1px solid #ddd;border-radius:8px;font-size:15px;width:100%}
+  #login button{background:#C4714A;color:#fff;padding:12px;border:none;
+    border-radius:8px;font-size:15px;cursor:pointer}
+
+  /* ── Main ── */
   #main{display:none}
-  .empty{color:#999;text-align:center;padding:40px}
+  .section-title{font-size:18px;font-weight:700;margin:28px 0 14px;
+    padding-bottom:8px;border-bottom:2px solid #e0e0e0}
+  .section-title span{display:inline-block;background:#eee;color:#555;
+    font-size:13px;font-weight:600;border-radius:12px;padding:2px 10px;
+    margin-left:8px;vertical-align:middle}
+
+  /* ── Cards ── */
+  .card{background:#fff;border-radius:10px;padding:16px;margin-bottom:12px;
+    box-shadow:0 1px 4px rgba(0,0,0,0.1);transition:opacity 0.3s}
+  .card.fading{opacity:0}
+  .name{font-weight:700;font-size:15px;margin-bottom:4px;color:#222}
+  .wish{color:#444;margin-bottom:8px;line-height:1.6;font-size:14px}
+  .ts{font-size:11px;color:#aaa;margin-bottom:12px}
+  .btns{display:flex;gap:8px;flex-wrap:wrap}
+  button{padding:8px 16px;border:none;border-radius:7px;cursor:pointer;
+    font-size:13px;font-weight:600;transition:opacity 0.2s}
+  button:disabled{opacity:0.5;cursor:not-allowed}
+  .btn-approve{background:#4CAF50;color:#fff}
+  .btn-reject{background:#f44336;color:#fff}
+  .btn-undo{background:#FF9800;color:#fff}
+
+  /* ── Empty state ── */
+  .empty{color:#aaa;text-align:center;padding:32px;font-size:14px}
+
+  /* ── Confirm overlay ── */
+  #confirm-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);
+    z-index:1000;align-items:center;justify-content:center}
+  #confirm-overlay.show{display:flex}
+  #confirm-box{background:#fff;border-radius:12px;padding:28px;max-width:320px;
+    width:90%;text-align:center;box-shadow:0 8px 32px rgba(0,0,0,0.2)}
+  #confirm-box h3{font-size:17px;margin-bottom:8px;color:#222}
+  #confirm-box p{font-size:14px;color:#555;margin-bottom:20px;line-height:1.5}
+  #confirm-box .btns{justify-content:center}
+  #confirm-box .btn-cancel{background:#eee;color:#444}
+  #confirm-box .btn-confirm-reject{background:#f44336;color:#fff}
 </style>
 </head>
 <body>
 
+<!-- Login -->
 <div id="login">
-  <h2 style="text-align:center">Wish Admin</h2>
-  <input type="password" id="pwd" placeholder="Password"/>
+  <h2>Wish Admin 🌸</h2>
+  <input type="password" id="pwd" placeholder="Password"
+    onkeydown="if(event.key==='Enter') checkPwd()"/>
   <button onclick="checkPwd()">Enter</button>
 </div>
 
+<!-- Main -->
 <div id="main">
-  <h1>Pending Wishes</h1>
-  <div id="list"></div>
+  <div class="section-title">
+    ⏳ Pending Wishes <span id="pending-count">0</span>
+  </div>
+  <div id="pending-list"></div>
+
+  <div class="section-title">
+    ✅ Approved Wishes <span id="approved-count">0</span>
+  </div>
+  <div id="approved-list"></div>
+</div>
+
+<!-- Reject confirmation overlay -->
+<div id="confirm-overlay">
+  <div id="confirm-box">
+    <h3>Reject this wish?</h3>
+    <p id="confirm-text"></p>
+    <div class="btns">
+      <button class="btn-cancel" onclick="closeConfirm()">Cancel</button>
+      <button class="btn-confirm-reject" id="confirm-reject-btn">Yes, Reject</button>
+    </div>
+  </div>
 </div>
 
 <script>
 const ADMIN_PASSWORD = 'naseef2026';
 
-const firebaseConfig={
+firebase.initializeApp({
   apiKey:"AIzaSyBwpJYHSbbFmRIAq7yDSoLsSBBaG8_X4SE",
   authDomain:"nn-wedding-17ffc.firebaseapp.com",
   projectId:"nn-wedding-17ffc",
   storageBucket:"nn-wedding-17ffc.firebasestorage.app",
   messagingSenderId:"392137581529",
   appId:"1:392137581529:web:c8234b2deb1484f17b2fc8"
-};
-firebase.initializeApp(firebaseConfig);
-const db=firebase.firestore();
+});
+const db = firebase.firestore();
 
+/* ── Login ── */
 function checkPwd(){
-  if(document.getElementById('pwd').value===ADMIN_PASSWORD){
-    document.getElementById('login').style.display='none';
-    document.getElementById('main').style.display='block';
+  if(document.getElementById('pwd').value === ADMIN_PASSWORD){
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
     loadPending();
-  }else{
+    loadApproved();
+  } else {
     alert('Wrong password');
   }
 }
 
+/* ── Escape HTML ── */
+function esc(s){
+  if(!s) return '';
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+/* ── Format timestamp ── */
+function fmt(ts){ return ts?.toDate().toLocaleString() || ''; }
+
+/* ── Reject confirmation ── */
+let pendingRejectId = null;
+
+function askReject(id, name, wish){
+  pendingRejectId = id;
+  document.getElementById('confirm-text').textContent =
+    `"${name}: ${wish.substring(0,80)}${wish.length>80?'…':''}"`;
+  document.getElementById('confirm-overlay').classList.add('show');
+  document.getElementById('confirm-reject-btn').onclick = confirmReject;
+}
+
+function closeConfirm(){
+  pendingRejectId = null;
+  document.getElementById('confirm-overlay').classList.remove('show');
+}
+
+function confirmReject(){
+  if(!pendingRejectId) return;
+  db.collection('wishes').doc(pendingRejectId).delete();
+  closeConfirm();
+}
+
+// Close overlay if clicking outside the box
+document.getElementById('confirm-overlay').addEventListener('click', function(e){
+  if(e.target === this) closeConfirm();
+});
+
+/* ── Pending wishes ── */
 function loadPending(){
   db.collection('wishes')
     .where('status','==','pending')
     .orderBy('timestamp','asc')
     .onSnapshot(snap=>{
-      const list=document.getElementById('list');
-      list.innerHTML='';
+      const list = document.getElementById('pending-list');
+      const count = document.getElementById('pending-count');
+      list.innerHTML = '';
+      count.textContent = snap.size;
       if(snap.empty){
-        list.innerHTML='<div class="empty">No pending wishes 🎉</div>';
+        list.innerHTML = '<div class="empty">No pending wishes 🎉</div>';
         return;
       }
       snap.docs.forEach(doc=>{
-        const d=doc.data();
-        const ts=d.timestamp?.toDate().toLocaleString()||'';
-        const card=document.createElement('div');
-        card.className='card';
-        card.innerHTML=`
+        const d = doc.data();
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
           <div class="name">${esc(d.name)}</div>
           <div class="wish">${esc(d.wish)}</div>
-          <div class="ts">${ts}</div>
+          <div class="ts">${fmt(d.timestamp)}</div>
           <div class="btns">
-            <button class="approve" onclick="approve('${doc.id}',this)">✅ Approve</button>
-            <button class="reject" onclick="reject('${doc.id}',this)">❌ Reject</button>
+            <button class="btn-approve" onclick="approve('${doc.id}',this)">✅ Approve</button>
+            <button class="btn-reject"
+              onclick="askReject('${doc.id}','${esc(d.name)}','${esc(d.wish)}')">
+              ❌ Reject
+            </button>
           </div>`;
         list.appendChild(card);
       });
     });
 }
 
-function approve(id,btn){
-  btn.disabled=true;
+/* ── Approved wishes ── */
+function loadApproved(){
+  db.collection('wishes')
+    .where('status','==','approved')
+    .orderBy('timestamp','asc')
+    .onSnapshot(snap=>{
+      const list = document.getElementById('approved-list');
+      const count = document.getElementById('approved-count');
+      list.innerHTML = '';
+      count.textContent = snap.size;
+      if(snap.empty){
+        list.innerHTML = '<div class="empty">No approved wishes yet</div>';
+        return;
+      }
+      snap.docs.forEach(doc=>{
+        const d = doc.data();
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+          <div class="name">${esc(d.name)}</div>
+          <div class="wish">${esc(d.wish)}</div>
+          <div class="ts">${fmt(d.timestamp)}</div>
+          <div class="btns">
+            <button class="btn-undo" onclick="undo('${doc.id}',this)">↩️ Move to Pending</button>
+          </div>`;
+        list.appendChild(card);
+      });
+    });
+}
+
+/* ── Actions ── */
+function approve(id, btn){
+  btn.disabled = true;
   db.collection('wishes').doc(id).update({status:'approved'});
 }
 
-function reject(id,btn){
-  btn.disabled=true;
-  db.collection('wishes').doc(id).delete();
-}
-
-function esc(s){
-  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function undo(id, btn){
+  btn.disabled = true;
+  db.collection('wishes').doc(id).update({status:'pending'});
 }
 </script>
 </body>

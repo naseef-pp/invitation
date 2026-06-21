@@ -19,11 +19,11 @@
 
 <!-- WhatsApp specifically uses this -->
 <meta name="twitter:card" content="summary_large_image"/>
-<meta name="twitter:image" content="https://naseef-pp.github.io/invitation/Web_assets/og_image.png"/>
+<meta name="twitter:image" content="https://naseef-pp.github.io/invitation/Web_assets/og_image.jpg"/>
   
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Caveat:wght@400;600;700&family=Mulish:wght@300;400;500&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Caveat:wght@400;600;700&family=Mulish:wght@300;400;500&family=Amiri:ital,wght@0,400;0,700;1,400&family=Baloo+Chettan+2:wght@400;500&display=swap" rel="stylesheet"/>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 <style>
@@ -36,6 +36,7 @@
   --gold:#C9A84C;--gold-l:#E8D48C;--gold-d:#8B7030;
   --fd:'Cormorant Garamond',Georgia,serif;
   --fh:'Caveat',cursive;--fb:'Mulish',sans-serif;--fa:'Amiri',serif;
+  --fm:'Baloo Chettan 2','Mulish',sans-serif;
 }
 /* ── RESET ── */
 *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
@@ -91,7 +92,16 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 @keyframes hintPulse{0%,100%{opacity:0.35}50%{opacity:0.85}}
 .cracked .seal-fill{fill:#9A4F2E}
 
-/* ── MUSIC BUTTON ── */
+/* ── SCROLL LOCK (active until seal is tapped) ── */
+body.scroll-locked{overflow:hidden;height:100vh}
+
+/* ── ENVELOPE ADDRESS ── */
+.env-address{position:absolute;bottom:28%;left:50%;
+  transform:translateX(-50%);
+  font-family:var(--fh);font-size:clamp(15px,3.5vw,20px);
+  color:var(--ink);letter-spacing:0.03em;white-space:nowrap;
+  opacity:0.82;pointer-events:none}
+.env-address strong{font-weight:700}
 #music-btn{position:fixed;top:20px;right:20px;z-index:500;width:42px;height:42px;
   border-radius:50%;background:var(--cream);border:1.5px solid var(--cream-dark);
   box-shadow:0 2px 12px rgba(0,0,0,0.08);cursor:pointer;
@@ -187,7 +197,7 @@ body::after{content:'';position:fixed;inset:0;pointer-events:none;z-index:9999;o
 
 /* ── VENUE SCRUB (image-sequence, device-aware) ── */
 #venue-section{height:800vh;position:relative;background:#000;display:none}
-@media(max-width:768px){#venue-section{height:500vh}}
+@media(max-width:768px){#venue-section{height:400vh}}
 #venue-section.visible{display:block}
 .venue-sticky{position:sticky;top:0;height:100vh;width:100%;overflow:hidden;
   display:flex;align-items:center;justify-content:center;background:#000}
@@ -301,6 +311,7 @@ canvas#booth-canvas{display:none}
 .wish-form label{display:block;font-family:var(--fh);font-size:clamp(16px,4vw,18px);
   color:var(--ink-mid);margin-bottom:7px}
 .wish-form input,.wish-form textarea{width:100%;border:none;
+  font-family:var(--fm);font-size:clamp(16px,4vw,18px);
   border-bottom:1.5px solid var(--cream-dark);background:transparent;
   padding:8px 0;font-family:var(--fh);font-size:16px;color:var(--ink);
   outline:none;transition:border-color 0.2s;resize:none;margin-bottom:14px}
@@ -409,6 +420,7 @@ canvas#booth-canvas{display:none}
   <div class="env-half" id="env-top"></div>
   <div class="env-half" id="env-bot"></div>
   <div class="env-content" id="env-content">
+    <div class="env-address" id="env-address" style="display:none"></div>
     <div class="env-seal-wrap" id="env-seal-wrap">
       <svg width="88" height="88" viewBox="0 0 80 80" fill="none">
         <circle class="seal-fill" cx="40" cy="40" r="38" fill="#C4714A"/>
@@ -445,7 +457,7 @@ canvas#booth-canvas{display:none}
     <path d="M306 26 Q311 20 316 26" stroke="#1E1810" stroke-width="1.2" fill="none" stroke-linecap="round"/>
   </svg>
 
-  <div class="hero-badge">The wedding of</div>
+  <div class="hero-badge" id="hero-badge">The wedding of</div>
   <!-- Doodle_1.png: couple standing together in wedding attire -->
   <div class="hero-art" id="hero-art">
     <img src="Web_assets/Doodle_1.png" alt="Naseef & Nisrin"/>
@@ -466,7 +478,7 @@ canvas#booth-canvas{display:none}
       <img src="Web_assets/Holding_hands.png" alt="Two hands joining in Nikah"/>
     </div>
     <div class="nik-details reveal d3">
-      <span>1:30 PM</span>
+      <span>11:30 AM</span>
       <span class="dot"></span>
       <span>Durbar Convention Center</span>
       <span class="dot"></span>
@@ -491,7 +503,7 @@ canvas#booth-canvas{display:none}
 <!-- ── LOCATION ── -->
 <section id="location">
   <div style="max-width:860px;margin:0 auto">
-    <h2 class="loc-t reveal">Find <em>Us</em></h2>
+    <h2 class="loc-t reveal">The <em>Venue</em></h2>
     <div class="loc-card reveal d2">
       <div class="map-area">
         <svg width="100%" height="150" viewBox="0 0 480 150" preserveAspectRatio="xMidYMid slice" fill="none">
@@ -565,7 +577,7 @@ canvas#booth-canvas{display:none}
     <div class="letter-eye reveal">a note from the couple</div>
     <div class="letter-card reveal d1">
       <div class="letter-text">
-        <p>To everyone reading this,</p>
+        <p id="letter-salutation">Hai,</p>
         <p>If this invitation found its way to you, it is because you matter to us more than words can say.</p>
         <p>Naseef and Nisrin's journey to this day has been quiet, full of faith, and full of love. On October 19th, we open the doors of Farm Rock Garden to celebrate not just a wedding, but the beginning of a beautiful life together.</p>
         <p>We don't ask for much. Just your presence, your duas, and your smile.</p>
@@ -578,6 +590,7 @@ canvas#booth-canvas{display:none}
 
 <!-- ── PHOTO BOOTH ── -->
 <section id="photobooth">
+  <h2 class="booth-title reveal">Take a photo <em>with us!</em></h2>
   <!-- Live camera view (shown when camera granted) -->
   <div class="booth-live" id="booth-live">
     <div class="booth-frame-wrap" id="booth-frame-wrap">
@@ -593,7 +606,6 @@ canvas#booth-canvas{display:none}
   <!-- Fallback (shown before camera granted or if denied) -->
   <div class="booth-fallback" id="booth-fallback">
     <img src="Web_assets/Doodle_camera.png" alt="Naseef & Nisrin holding a camera"/>
-    <p>Take a photo with us!</p>
     <button class="btn btn-p" id="booth-start">📸 Open Camera</button>
   </div>
 </section>
@@ -684,6 +696,40 @@ function toast(msg,dur=3200){
   toastT=setTimeout(()=>toastEl.classList.remove('show'),dur);
 }
 
+/* ── GUEST NAME PERSONALISATION ─────── */
+const guestName=(()=>{
+  const raw=new URLSearchParams(window.location.search).get('to')||'';
+  return raw.trim();
+})();
+
+// Envelope address line — only shown if name provided
+if(guestName){
+  const addr=$('env-address');
+  if(addr){
+    addr.innerHTML='To <strong>'+esc(guestName)+'</strong>';
+    addr.style.display='block';
+  }
+}
+
+// Hero badge — "Hai Name, the wedding of" or default "The wedding of"
+(()=>{
+  const badge=$('hero-badge');
+  if(!badge) return;
+  if(guestName){
+    badge.innerHTML='Hai <strong>'+esc(guestName)+'</strong>, the wedding of';
+  }
+})();
+
+// Letter salutation — "Dear Name," or default "Hai,"
+(()=>{
+  const sal=$('letter-salutation');
+  if(!sal) return;
+  sal.textContent = guestName ? 'Dear '+guestName+',' : 'Hai,';
+})();
+
+/* ── SCROLL LOCK (until seal is tapped) ── */
+document.body.classList.add('scroll-locked');
+
 /* ── PETALS ──────────────────────────── */
 (function(){
   const colors=['#C4714A','#7A9E7E','#C9A84C','#E8A07D','#B8D4BA','#E8D48C'];
@@ -768,6 +814,13 @@ function openEnvelope(){
     ov.classList.add('gone');
     page.style.opacity='1';
     $('music-btn').style.display='flex';
+    // Unlock scroll now that the envelope has opened
+    document.body.classList.remove('scroll-locked');
+    // Pre-fill wish form name if guest name was provided
+    if(guestName){
+      const wName=$('w-name');
+      if(wName && !wName.value) wName.value=guestName;
+    }
   },1050);
   setTimeout(()=>{
     const ov=document.getElementById('env-overlay');

@@ -1210,6 +1210,16 @@ wSubmit.addEventListener('click',async()=>{
     wName.value='';wText.value='';wChar.textContent=CHAR_LIMIT;
     wLbl.textContent='Thankyou🤍';
     toast('Your wish is in, will be pinned soon 🤍');
+    // Telegram notification
+    (function(){
+      const msg='🌸 New wish submitted!\n\nFrom: '+name+'\nWish: '+wish+'\n\nApprove 👉 https://naseef-pp.github.io/invitation/admin.html';
+      fetch('https://api.telegram.org/bot8933615162:AAHsyGIVpMFRr990OssXTH4fbxBup4x3XN8/sendMessage',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({chat_id:'-1003853040787',text:msg})
+      }).catch(function(){});
+    })();
+    // Telegram notification over
     setTimeout(()=>{wLbl.textContent='Pin it 📌';wSubmit.disabled=false},3000);
   }catch(e){
     wLbl.textContent='Pin it 📌';wSubmit.disabled=false;

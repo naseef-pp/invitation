@@ -799,6 +799,8 @@ function openEnvelope(){
     if(!musicPlaying){
       musicPlaying=true;
       musicBtn.classList.add('on');
+      masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+      masterGain.gain.setValueAtTime(0.22,audioCtx.currentTime);
       playMusicLoop();
     }
   }
@@ -892,8 +894,15 @@ musicBtn.addEventListener('click',()=>{
   if(audioCtx.state==='suspended') audioCtx.resume();
   musicPlaying=!musicPlaying;
   musicBtn.classList.toggle('on',musicPlaying);
-  if(musicPlaying){playMusicLoop();}
-  else{clearTimeout(musicLoopTimer);}
+  if(musicPlaying){
+    masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
+    masterGain.gain.setValueAtTime(0.22,audioCtx.currentTime);
+    playMusicLoop();
+  }else{
+    clearTimeout(musicLoopTimer);
+    masterGain.gain.setValueAtTime(masterGain.gain.value,audioCtx.currentTime);
+    masterGain.gain.linearRampToValueAtTime(0,audioCtx.currentTime+0.4);
+  }
 });
 
 /* ── SCROLL REVEAL ───────────────────── */

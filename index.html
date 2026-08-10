@@ -183,17 +183,66 @@ body.scroll-locked{overflow:hidden;height:100vh}
 /* ── NIKAH ── */
 #nikah{text-align:center;padding:clamp(60px,9vw,100px) clamp(20px,5vw,60px);
   background:rgba(250,247,242,0.94);position:relative;z-index:1}
-.nik-eyebrow{font-family:var(--fh);font-size:15px;color:var(--sage-d);
-  letter-spacing:0.15em;text-transform:uppercase;margin-bottom:6px}
+/* ── NIKAH SECTION (Option 4 — dark ceremonial) ── */
+#nikah{background:linear-gradient(170deg,#1E2A1F 0%,#12180F 100%);
+  padding:clamp(70px,12vw,120px) clamp(20px,5vw,60px);
+  text-align:center;position:relative;overflow:hidden}
+#nikah::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 70% 30%,rgba(196,113,74,0.12) 0%,transparent 65%);
+  pointer-events:none}
+.nik-bism{font-family:var(--fa);font-size:clamp(18px,3vw,28px);
+  color:rgba(255,255,255,0.45);margin-bottom:36px;line-height:1.5;position:relative}
+.nik-hands{margin:0 auto 44px;max-width:240px;position:relative}
+.nik-hands img{width:100%;height:auto;display:block}
 .nik-title{font-family:var(--fd);font-weight:300;
-  font-size:clamp(44px,12vw,54px);color:var(--ink);line-height:1.2;margin-bottom:28px}
-.nik-title em{color:var(--terra);font-style:italic}
-.nik-doodle{margin:0 auto 28px;max-width:280px}
-.nik-doodle img{width:100%;height:auto;display:block}
-.nik-details{display:inline-flex;gap:14px;align-items:center;
-  font-family:var(--fh);font-size:clamp(14px,3.4vw,17px);color:var(--ink-light);
-  opacity:0.78;flex-wrap:wrap;justify-content:center}
-.nik-details .dot{width:3px;height:3px;border-radius:50%;background:var(--gold);flex-shrink:0}
+  font-size:clamp(46px,11vw,78px);color:rgba(255,255,255,0.92);
+  line-height:1.1;margin-bottom:12px;position:relative}
+.nik-title em{color:var(--terra-l);font-style:italic}
+.nik-sub{font-family:var(--fd);font-style:italic;
+  font-size:clamp(16px,3vw,22px);color:rgba(255,255,255,0.4);
+  margin-bottom:48px;position:relative}
+.nik-divider{width:1px;height:48px;background:rgba(255,255,255,0.15);
+  margin:0 auto 40px;position:relative}
+.nik-details{display:flex;flex-direction:column;gap:16px;
+  align-items:center;position:relative}
+.nik-detail{font-family:var(--fd);font-size:clamp(18px,4vw,26px);
+  color:rgba(255,255,255,0.7);font-weight:300}
+.nik-detail em{color:var(--terra-l);font-style:italic;font-weight:400}
+.nik-detail .nik-place-sub{font-size:clamp(14px,3vw,20px);
+  color:rgba(255,255,255,0.4);font-style:italic;display:block;margin-top:2px}
+
+/* ── NIKAH VENUE CARD ── */
+#nikah-location{text-align:center;
+  padding:clamp(60px,9vw,100px) clamp(20px,5vw,60px);
+  background:rgba(242,235,224,0.97);position:relative;z-index:1}
+.nloc-card{max-width:480px;margin:0 auto;border-radius:16px;overflow:hidden;
+  box-shadow:0 4px 24px rgba(0,0,0,0.1);cursor:pointer;
+  transition:transform 0.2s ease,box-shadow 0.2s ease;display:block;
+  text-decoration:none;color:inherit}
+.nloc-card:hover,.nloc-card:active{transform:translateY(-3px);
+  box-shadow:0 8px 32px rgba(0,0,0,0.15)}
+.nloc-map-area{height:150px;background:#B8D4BA;position:relative;overflow:hidden}
+.nloc-body{background:#fff;padding:20px 24px}
+.nloc-name{font-family:var(--fd);font-size:clamp(20px,4.5vw,26px);
+  color:var(--ink);font-weight:400;margin-bottom:4px}
+.nloc-addr{font-family:var(--fb);font-size:13px;color:var(--ink-light);margin-bottom:16px}
+.nloc-directions{display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--fb);font-size:13px;color:var(--terra);font-weight:500}
+
+/* ── NIKAH BRIEF MENTION (for reception-only guests) ── */
+#nikah-mention{text-align:center;
+  padding:clamp(40px,7vw,70px) clamp(20px,5vw,60px);
+  background:rgba(242,235,224,0.97);position:relative;z-index:1}
+.nik-mention-inner{max-width:480px;margin:0 auto;
+  border:1px solid var(--cream-dark);border-radius:12px;
+  padding:28px 24px;background:var(--cream)}
+.nik-mention-eyebrow{font-family:var(--fh);font-size:12px;
+  letter-spacing:0.15em;text-transform:uppercase;color:var(--ink-light);margin-bottom:10px}
+.nik-mention-title{font-family:var(--fd);font-weight:300;
+  font-size:clamp(24px,6vw,36px);color:var(--ink);margin-bottom:14px}
+.nik-mention-title em{color:var(--terra);font-style:italic}
+.nik-mention-detail{font-family:var(--fd);font-size:clamp(14px,3.2vw,17px);
+  color:var(--ink-light);line-height:1.8}
 
 /* ── VENUE SCRUB (image-sequence, device-aware) ── */
 #venue-section{height:800vh;position:relative;background:#000;display:none}
@@ -467,22 +516,69 @@ canvas#booth-canvas{display:none}
   <div class="scroll-hint"><span>scroll to begin</span><div class="sarr"></div></div>
 </section>
 
-<!-- ── NIKAH ── -->
+<!-- ── NIKAH SECTION (hidden for ?e=r, shown for ?e=n and ?e=b) ── -->
 <section id="nikah">
-  <div style="max-width:580px;margin:0 auto">
-    <div class="nik-eyebrow reveal">18 October 2026</div>
-    <div class="divider reveal d1"></div>
-    <h2 class="nik-title reveal d1">The <em>Nikah</em></h2>
-    <!-- Holding_hands.png replaces the poem -->
-    <div class="nik-doodle reveal d2">
-      <img src="Web_assets/Holding_hands.png" alt="Two hands joining in Nikah"/>
+  <div class="nik-bism reveal">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+  <div class="nik-hands reveal d1">
+    <img src="Web_assets/Holding_hands.png" alt="Two hands joining in Nikah"/>
+  </div>
+  <div class="nik-title reveal d2">The <em>Nikah</em></div>
+  <div class="nik-sub reveal d2">of Naseef &amp; Nisrin</div>
+  <div class="nik-divider reveal d3"></div>
+  <div class="nik-details reveal d3">
+    <div class="nik-detail"><em>18 October 2026</em> · 11:30 AM</div>
+    <div class="nik-detail">Durbar Convention Center
+      <span class="nik-place-sub">Kodungallur</span>
     </div>
-    <div class="nik-details reveal d3">
-      <span>11:30 AM</span>
-      <span class="dot"></span>
-      <span>Durbar Convention Center</span>
-      <span class="dot"></span>
-      <span>Kodungallur</span>
+  </div>
+</section>
+
+<!-- ── NIKAH VENUE CARD (shown for ?e=n and ?e=b) ── -->
+<section id="nikah-location">
+  <div style="max-width:860px;margin:0 auto">
+    <a class="nloc-card reveal" href="https://maps.app.goo.gl/dug34pPL26uCt4DY9" target="_blank" rel="noopener">
+      <div class="nloc-map-area">
+        <svg width="100%" height="150" viewBox="0 0 480 150" preserveAspectRatio="xMidYMid slice" fill="none">
+          <rect width="480" height="150" fill="#B8D4BA"/>
+          <path d="M0 75 H480" stroke="#FAF7F2" stroke-width="13" opacity="0.55"/>
+          <path d="M240 0 V150" stroke="#FAF7F2" stroke-width="9" opacity="0.45"/>
+          <path d="M95 0 L80 150" stroke="#FAF7F2" stroke-width="5" opacity="0.3"/>
+          <path d="M365 0 L350 150" stroke="#FAF7F2" stroke-width="5" opacity="0.3"/>
+          <rect x="138" y="18" width="88" height="44" rx="7" fill="#7A9E7E" opacity="0.32"/>
+          <rect x="265" y="88" width="76" height="44" rx="7" fill="#7A9E7E" opacity="0.26"/>
+          <circle cx="55" cy="38" r="11" fill="#4E7852" opacity="0.4"/>
+          <circle cx="416" cy="118" r="10" fill="#4E7852" opacity="0.4"/>
+          <line x1="0" y1="75" x2="480" y2="75" stroke="#E8DED0" stroke-width="1.3" stroke-dasharray="11 9" opacity="0.6"/>
+          <g transform="translate(234,42)">
+            <circle cx="0" cy="0" r="19" fill="#C4714A"/>
+            <circle cx="0" cy="0" r="7" fill="white"/>
+            <line x1="0" y1="19" x2="0" y2="30" stroke="#C4714A" stroke-width="3.5" stroke-linecap="round"/>
+          </g>
+          <text x="234" y="20" font-family="Caveat,cursive" font-size="12" fill="#1E1810" text-anchor="middle" font-weight="600">Durbar Convention Center</text>
+        </svg>
+      </div>
+      <div class="nloc-body">
+        <div class="nloc-name">Durbar Convention Center</div>
+        <div class="nloc-addr">Kodungallur</div>
+        <div class="nloc-directions">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+          </svg>
+          Get Directions
+        </div>
+      </div>
+    </a>
+  </div>
+</section>
+
+<!-- ── NIKAH BRIEF MENTION (shown only for ?e=r guests) ── -->
+<section id="nikah-mention">
+  <div class="nik-mention-inner reveal">
+    <div class="nik-mention-eyebrow">also joining us for</div>
+    <div class="nik-mention-title">The <em>Nikah</em></div>
+    <div class="nik-mention-detail">
+      18 October 2026 · 11:30 AM<br>
+      Durbar Convention Center, Kodungallur
     </div>
   </div>
 </section>
@@ -700,6 +796,48 @@ function toast(msg,dur=3200){
 const guestName=(()=>{
   const raw=new URLSearchParams(window.location.search).get('to')||'';
   return raw.trim();
+})();
+
+/* ── EVENT VERSION ───────────────────── */
+// e=r → reception only, e=n → nikah only, e=b or none → both
+const eventParam=(new URLSearchParams(window.location.search).get('e')||'b').toLowerCase();
+const isReceptionOnly = eventParam==='r';
+const isNikahOnly     = eventParam==='n';
+const isBoth          = !isReceptionOnly && !isNikahOnly;
+
+(function applyEventVersion(){
+  // Sections that exist in all versions
+  // nikah full section: hidden for reception-only
+  const nikahSec      = document.getElementById('nikah');
+  // nikah venue card: hidden for reception-only
+  const nikahLoc      = document.getElementById('nikah-location');
+  // nikah brief mention: only shown for reception-only
+  const nikahMention  = document.getElementById('nikah-mention');
+
+  function hide(el){ if(el) el.style.display='none'; }
+  function show(el,display){ if(el) el.style.display=display||'block'; }
+
+  if(isReceptionOnly){
+    hide(nikahSec);
+    hide(nikahLoc);
+    show(nikahMention);
+  } else {
+    // nikah and both
+    show(nikahSec);
+    show(nikahLoc);
+    hide(nikahMention);
+  }
+
+  // Countdown target
+  // Nikah-only and both → Oct 18 11:30am IST
+  // Reception-only      → Oct 19 4pm IST
+  window.__countdownTarget = isReceptionOnly
+    ? new Date('2026-10-19T16:00:00+05:30')
+    : new Date('2026-10-18T11:30:00+05:30');
+
+  // Calendar save mode
+  // b → save both events, n → nikah only, r → reception only
+  window.__calendarMode = isNikahOnly ? 'nikah' : isReceptionOnly ? 'reception' : 'both';
 })();
 
 // Envelope address line — only shown if name provided
@@ -941,15 +1079,17 @@ addEventListener('scroll',()=>{
 /* ── VENUE SCRUB (image-sequence, device-aware) ─────── */
 (function(){
   // ── Device detection ─────────────────────────────
-  // Portrait frames (mobile) vs landscape frames (desktop).
-  // We match on the same 768px breakpoint used throughout the CSS.
   const isMobile = window.matchMedia('(max-width:768px)').matches;
+  const isNikahGuest = (new URLSearchParams(window.location.search).get('e')||'').toLowerCase()==='n';
 
-  const TOTAL     = isMobile ? 250 : 360;
-  const STEP      = 1;
-  const PAD       = 3;
-  const FRAME_PATH = isMobile ? 'Web_assets/Frames_4/' : 'Web_assets/Frames_3/';
-  const PLACEHOLDER = isMobile
+  // For nikah-only guests, stop scrub early before reception details appear
+  const TOTAL_FRAMES = isMobile ? 250 : 360;
+  const STOP_AT      = isNikahGuest ? (isMobile ? 217 : 291) : TOTAL_FRAMES;
+  const TOTAL        = STOP_AT;
+  const STEP         = 1;
+  const PAD          = 3;
+  const FRAME_PATH   = isMobile ? 'Web_assets/Frames_4/' : 'Web_assets/Frames_3/';
+  const PLACEHOLDER  = isMobile
     ? 'Web_assets/last_frame_port.webp'
     : 'Web_assets/last_frame.webp';
 
@@ -959,6 +1099,11 @@ addEventListener('scroll',()=>{
   const ctx      = canvas.getContext('2d');
   const lastSec  = $('last-frame-section');
   const lastImg  = $('last-frame-img');
+
+  // Adjust section scroll height proportionally to frame count
+  const baseHeightVH = isMobile ? 400 : 800;
+  const ratio = TOTAL / TOTAL_FRAMES;
+  section.style.height = Math.round(baseHeightVH * ratio) + 'vh';
 
   // Set the correct placeholder image immediately (before any frames load)
   lastImg.src = PLACEHOLDER;
@@ -1041,7 +1186,7 @@ addEventListener('scroll',()=>{
 })();
 
 /* ── COUNTDOWN ───────────────────────── */
-const TARGET=new Date('2026-10-19T16:00:00+05:30');
+const TARGET = window.__countdownTarget || new Date('2026-10-18T11:30:00+05:30');
 function updateCD(){
   const diff=TARGET-Date.now();
   if(diff<=0){$('cd-d').textContent=$('cd-h').textContent=$('cd-m').textContent='00';$('cd-s').textContent='🎉';return}
@@ -1057,37 +1202,76 @@ $('cal-btn').addEventListener('click',()=>{
   const ua=navigator.userAgent||'';
   const isIOS=/iPad|iPhone|iPod/.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
   const isAndroid=/Android/.test(ua);
-  const title='Naseef & Nisrin — Wedding Reception 🤍';
-  const details='You are warmly invited to the wedding reception of Naseef & Nisrin.\nFarm Rock Garden, Farook College Road, Chungam, Kozhikode · 4:00 PM – 10:00 PM';
-  const location='Farm Rock Garden, Farook College Road, Chungam, Kozhikode, Kerala';
+  const mode = window.__calendarMode || 'both';
 
+  // Event definitions
+  const nikahEvent={
+    title:'Naseef & Nisrin — The Nikah 🤍',
+    details:'You are warmly invited to the Nikah of Naseef & Nisrin.\nDurbar Convention Center, Kodungallur · 11:30 AM',
+    location:'Durbar Convention Center, Kodungallur, Kerala',
+    start:'20261018T060000Z', end:'20261018T093000Z',
+    startIST:'20261018T113000', endIST:'20261018T140000'
+  };
+  const recepEvent={
+    title:'Naseef & Nisrin — Wedding Reception 🤍',
+    details:'You are warmly invited to the wedding reception of Naseef & Nisrin.\nFarm Rock Garden, Farook College Road, Chungam, Kozhikode · 4:00 PM',
+    location:'Farm Rock Garden, Farook College Road, Chungam, Kozhikode, Kerala',
+    start:'20261019T103000Z', end:'20261019T163000Z',
+    startIST:'20261019T160000', endIST:'20261019T220000'
+  };
+
+  function makeVEVENT(ev){
+    return ['BEGIN:VEVENT',
+      'DTSTART;TZID=Asia/Kolkata:'+ev.startIST,
+      'DTEND;TZID=Asia/Kolkata:'+ev.endIST,
+      'SUMMARY:'+ev.title,
+      'DESCRIPTION:'+ev.details.replace(/\n/g,'\\n').replace(/,/g,'\\,'),
+      'LOCATION:'+ev.location.replace(/,/g,'\\,'),
+      'STATUS:CONFIRMED',
+      'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Reminder 🤍','TRIGGER:-PT1H','END:VALARM',
+      'END:VEVENT'].join('\r\n');
+  }
+
+  // Android — Google Calendar deep link
   if(isAndroid){
-    // Opens straight into Google Calendar's add-event screen — no file involved
+    let ev = mode==='nikah' ? nikahEvent : recepEvent;
+    if(mode==='both'){
+      // For both, open nikah first; reception can be added separately
+      // (Google Calendar link only supports one event at a time)
+      ev = nikahEvent;
+    }
     const url='https://calendar.google.com/calendar/render?action=TEMPLATE'
-      +'&text='+encodeURIComponent(title)
-      +'&dates=20261019T103000Z/20261019T163000Z'
-      +'&details='+encodeURIComponent(details)
-      +'&location='+encodeURIComponent(location);
+      +'&text='+encodeURIComponent(ev.title)
+      +'&dates='+ev.start+'/'+ev.end
+      +'&details='+encodeURIComponent(ev.details)
+      +'&location='+encodeURIComponent(ev.location);
     window.location.href=url;
+    if(mode==='both'){
+      setTimeout(()=>{
+        const url2='https://calendar.google.com/calendar/render?action=TEMPLATE'
+          +'&text='+encodeURIComponent(recepEvent.title)
+          +'&dates='+recepEvent.start+'/'+recepEvent.end
+          +'&details='+encodeURIComponent(recepEvent.details)
+          +'&location='+encodeURIComponent(recepEvent.location);
+        window.open(url2,'_blank');
+      },1500);
+    }
     return;
   }
 
+  // iOS and Desktop — .ics file
+  const events = mode==='both'
+    ? makeVEVENT(nikahEvent)+'\r\n'+makeVEVENT(recepEvent)
+    : mode==='nikah' ? makeVEVENT(nikahEvent) : makeVEVENT(recepEvent);
+
   const ics=['BEGIN:VCALENDAR','VERSION:2.0',
     'PRODID:-//Naseef & Nisrin Wedding//EN','CALSCALE:GREGORIAN','METHOD:PUBLISH',
-    'BEGIN:VEVENT','DTSTART;TZID=Asia/Kolkata:20261019T160000',
-    'DTEND;TZID=Asia/Kolkata:20261019T220000',
-    'SUMMARY:'+title,
-    'DESCRIPTION:'+details.replace(/\n/g,'\\n').replace(/,/g,'\\,'),
-    'LOCATION:'+location.replace(/,/g,'\\,'),'STATUS:CONFIRMED',
-    'BEGIN:VALARM','ACTION:DISPLAY','DESCRIPTION:Wedding Reception in 1 hour 🤍',
-    'TRIGGER:-PT1H','END:VALARM','END:VEVENT','END:VCALENDAR'].join('\r\n');
+    events,
+    'END:VCALENDAR'].join('\r\n');
 
   if(isIOS){
-    // Navigating directly to a text/calendar data URI makes Safari open the
-    // event straight in the Calendar app's "Add" screen, instead of downloading a file
     window.location.href='data:text/calendar;charset=utf-8,'+encodeURIComponent(ics);
   }else{
-    // Desktop: no single "calendar app" to deep-link into, so offer the .ics file
     const b=new Blob([ics],{type:'text/calendar;charset=utf-8'});
     const u=URL.createObjectURL(b),a=document.createElement('a');
     a.href=u;a.download='naseef-nisrin-wedding.ics';a.click();URL.revokeObjectURL(u);

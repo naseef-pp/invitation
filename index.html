@@ -237,10 +237,8 @@ body.scroll-locked{overflow:hidden;height:100vh}
 #nikah-light .nik-title em{color:var(--terra);font-style:italic}
 #nikah-light .nik-doodle{margin:0 auto 28px;max-width:280px}
 #nikah-light .nik-doodle img{width:100%;height:auto;display:block}
-#nikah-light .nik-details{display:inline-flex;gap:14px;align-items:center;
-  font-family:var(--fh);font-size:clamp(14px,3.4vw,17px);color:var(--ink-light);
-  opacity:0.78;flex-wrap:wrap;justify-content:center}
-#nikah-light .nik-details .dot{width:3px;height:3px;border-radius:50%;background:var(--gold);flex-shrink:0}
+#nikah-light .nik-details{font-family:var(--fh);font-size:clamp(12px,2.9vw,15px);
+  color:var(--ink-light);opacity:0.75;line-height:1.7}
 
 /* ── VENUE SCRUB (image-sequence, device-aware) ── */
 #venue-section{height:800vh;position:relative;background:#000;display:none}
@@ -536,13 +534,7 @@ canvas#booth-canvas{display:none}
     <div class="nik-doodle reveal d2">
       <img src="Web_assets/Holding_hands.png" alt="Two hands joining in Nikah"/>
     </div>
-    <div class="nik-details reveal d3">
-      <span>11:30 AM</span>
-      <span class="dot"></span>
-      <span>Durbar Convention Center</span>
-      <span class="dot"></span>
-      <span>Kodungallur</span>
-    </div>
+    <div class="nik-details reveal d3">11:30 AM &nbsp;·&nbsp; Durbar Convention Center, Kodungallur</div>
   </div>
 </section>
 
@@ -1241,28 +1233,24 @@ $('cal-btn').addEventListener('click',()=>{
 
   // Android — Google Calendar deep link
   if(isAndroid){
-    let ev = mode==='nikah' ? nikahEvent : recepEvent;
-    if(mode==='both'){
-      // For both, open nikah first; reception can be added separately
-      // (Google Calendar link only supports one event at a time)
-      ev = nikahEvent;
+    function gcalUrl(ev){
+      return 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+        +'&text='+encodeURIComponent(ev.title)
+        +'&dates='+ev.start+'/'+ev.end
+        +'&details='+encodeURIComponent(ev.details)
+        +'&location='+encodeURIComponent(ev.location);
     }
-    const url='https://calendar.google.com/calendar/render?action=TEMPLATE'
-      +'&text='+encodeURIComponent(ev.title)
-      +'&dates='+ev.start+'/'+ev.end
-      +'&details='+encodeURIComponent(ev.details)
-      +'&location='+encodeURIComponent(ev.location);
-    window.location.href=url;
     if(mode==='both'){
-      setTimeout(()=>{
-        const url2='https://calendar.google.com/calendar/render?action=TEMPLATE'
-          +'&text='+encodeURIComponent(recepEvent.title)
-          +'&dates='+recepEvent.start+'/'+recepEvent.end
-          +'&details='+encodeURIComponent(recepEvent.details)
-          +'&location='+encodeURIComponent(recepEvent.location);
-        window.open(url2,'_blank');
-      },1500);
+      // Open the reception event in a new tab FIRST (synchronously, in the
+      // same click handler) — a setTimeout here would get cancelled the
+      // instant we navigate the current tab away to the nikah event below.
+      toast('📅 Adding both events — check the second tab too!');
+      window.open(gcalUrl(recepEvent),'_blank');
+      window.location.href=gcalUrl(nikahEvent);
+      return;
     }
+    const ev = mode==='nikah' ? nikahEvent : recepEvent;
+    window.location.href=gcalUrl(ev);
     return;
   }
 
